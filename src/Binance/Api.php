@@ -7,7 +7,7 @@ namespace Binance;
 use Binance\Command\CloseAllOpenOrdersCommand;
 use Binance\Command\CloseOrderCommand;
 use CurlClient\CurlClient;
-use Binance\Command\AbstractOpenOrderCommand;
+use Binance\Command\OpenOrderCommand;
 use CurlClient\CurlClientConst;
 use CurlClient\Query\Request;
 use CurlClient\Response\CloseOrderResponse;
@@ -26,9 +26,11 @@ class Api
         $this->config = $config;
     }
 
-    public function createOrder(AbstractOpenOrderCommand $cmd): CreateOrderResponse
+    public function createOrder(OpenOrderCommand $cmd): CreateOrderResponse
     {
-        $cmd->throwIfInvalid();
+//        dump('ok');
+        $cmd->validate();
+        exit;
 
         [$headers, $output] = $this->client->request(
             (new Request())

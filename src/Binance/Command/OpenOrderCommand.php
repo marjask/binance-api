@@ -12,16 +12,15 @@ use Binance\ValueObject\OrderSide;
 use Binance\ValueObject\OrderType;
 use Binance\ValueObject\Price;
 use Binance\ValueObject\FloatVO;
-use Binance\ValueObject\RecvWindow;
 use Binance\ValueObject\Text;
-use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
-abstract class AbstractOpenOrderCommand extends AbstractOrderCommand
+class OpenOrderCommand extends AbstractOrderCommand
 {
-    protected OrderSide $side;
-    protected OrderType $type;
+    protected ?OrderSide $side;
+    protected ?OrderType $type;
     protected ?FloatVO $quantity;
-    protected BooleanVO $test;
+    protected ?BooleanVO $test;
     protected ?Text $timeInForce;
     protected ?FloatVO $quoteOrderQty;
     protected ?Price $price;
@@ -35,17 +34,27 @@ abstract class AbstractOpenOrderCommand extends AbstractOrderCommand
         parent::__construct();
 
         $this->setTest(new BooleanVO(false));
+        $this->setSide(null);
+        $this->setType(null);
+        $this->setQuantity(null);
+        $this->setTimeInForce(null);
+        $this->setQuoteOrderQty(null);
+        $this->setPrice(null);
+        $this->setStopPrice(null);
+        $this->setTrailingDelta(null);
+        $this->setIcebergQty(null);
+        $this->setNewOrderRespType(null);
     }
 
-    final public function getSide(): OrderSide
+    final public function getSide(): ?OrderSide
     {
         return $this->side;
     }
 
-    final public function setSide(OrderSide $side): self
+    final public function setSide(?OrderSide $side): self
     {
         $this->side = $side;
-        
+
         return $this;
     }
 
@@ -61,36 +70,36 @@ abstract class AbstractOpenOrderCommand extends AbstractOrderCommand
         return $this;
     }
 
-    final public function getPrice(): Price
+    final public function getPrice(): ?Price
     {
         return $this->price;
     }
 
-    final public function setPrice(Price $price): self
+    final public function setPrice(?Price $price): self
     {
         $this->price = $price;
 
         return $this;
     }
 
-    final public function getType(): OrderType
+    final public function getType(): ?OrderType
     {
         return $this->type;
     }
 
-    final public function setType(OrderType $type): self
+    final public function setType(?OrderType $type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    final public function isTest(): BooleanVO
+    final public function getTest(): ?BooleanVO
     {
         return $this->test;
     }
 
-    final public function setTest(BooleanVO $test): self
+    final public function setTest(?BooleanVO $test): self
     {
         $this->test = $test;
 
@@ -173,10 +182,8 @@ abstract class AbstractOpenOrderCommand extends AbstractOrderCommand
     {
         // @todo find better solution
         $params = [
-            'symbol' => $this->getSymbol()->getValue(),
             'side' => $this->getSide()->getValue(),
             'type' => $this->getType()->getValue(),
-            'timestamp' => $this->getTimestamp()->getValue(),
         ];
 
         if ($this->getQuantity() instanceof FloatVO) {
@@ -195,10 +202,6 @@ abstract class AbstractOpenOrderCommand extends AbstractOrderCommand
             $params['price'] = $this->getPrice()->getValue();
         }
 
-        if ($this->getNewClientOrderId() instanceof Text) {
-            $params['newClientOrderId'] = $this->getNewClientOrderId()->getValue();
-        }
-
         if ($this->getStopPrice() instanceof Price) {
             $params['stopPrice'] = $this->getStopPrice()->getValue();
         }
@@ -207,32 +210,74 @@ abstract class AbstractOpenOrderCommand extends AbstractOrderCommand
             $params['trailingDelta'] = $this->getStopPrice()->getValue();
         }
 
-        if ($this->getIcebergQty() instanceof Price) {
+        if ($this->getIcebergQty() instanceof FloatVO) {
             $params['icebergQty'] = $this->getIcebergQty()->getValue();
         }
 
-        if ($this->getNewOrderRespType() instanceof Price) {
+        if ($this->getNewOrderRespType() instanceof OrderRespType) {
             $params['newOrderRespType'] = $this->getNewOrderRespType()->getValue();
         }
 
-        if ($this->getRecvWindow() instanceof RecvWindow) {
-            $params['recvWindow'] = $this->getRecvWindow()->getValue();
-        }
-
-        return $params;
+        return array_merge($params, parent::getPreparedParams());
     }
 
-    public function throwIfInvalid(): void
+//    public function throwIfInvalid(): void
+//    {
+//        if (
+//            in_array($this->getType()->getValue(), [
+//                ApiConst::ORDER_TYPE_LIMIT,
+//                ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
+//                ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
+//            ], true)
+//            && !($this->getPrice() instanceof Price)
+//        ) {
+//            throw new InvalidArgumentException('Wymagane pole price');
+//        }
+//    }
+    public function getValidators(): array
     {
-        if (
-            in_array($this->getType()->getValue(), [
-                ApiConst::ORDER_TYPE_LIMIT,
-                ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
-                ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
-            ], true)
-            && !($this->getPrice() instanceof Price)
-        ) {
-            throw new InvalidArgumentException('Wymagane pole price');
-        }
+        return array_merge(parent::getValidators(), [
+            'type' => new Assert\Required([
+                new Assert\NotNull(null, 'Parameter type should be not null.'),
+                new Assert\Type('string', 'Parameter type must be {{ type }}.'),
+            ]),
+            'side' => new Assert\Required([
+                new Assert\NotNull(null, 'Parameter order should be not null.'),
+                new Assert\Type('string', 'Parameter order must be {{ type }}.'),
+            ]),
+            'quantity' => new Assert\Optional([
+                new Assert\Type('numeric')
+            ]),
+            'timeInForce' => new Assert\Optional([
+                new Assert\Type('string')
+            ]),
+            'price' => new Assert\Optional([
+                new Assert\Type('numeric')
+            ]),
+            'stopPrice' => new Assert\Optional([
+                new Assert\Type('numeric', 'Parameter stopPrice must be {{ type }}.'),
+                new Assert\Collection([
+                    'stopPrice' => new Assert\Expression([
+                        'expression' => 'root["type"] in [val1, val2, val3, val4]',
+                        'message' => 'Parameter stopPrice used with STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.',
+                        'values' => [
+                            'val1' => ApiConst::ORDER_TYPE_STOP_LOSS,
+                            'val2' => ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
+                            'val3' => ApiConst::ORDER_TYPE_TAKE_PROFIT,
+                            'val4' => ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
+                        ],
+                    ]),
+                ]),
+            ]),
+            'trailingDelta' => new Assert\Optional([
+                new Assert\Type('numeric')
+            ]),
+            'icebergQty' => new Assert\Optional([
+                new Assert\Type('numeric')
+            ]),
+            'newOrderRespType' => new Assert\Optional([
+                new Assert\Type('string')
+            ]),
+        ]);
     }
 }

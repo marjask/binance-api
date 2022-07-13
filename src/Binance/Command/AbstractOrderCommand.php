@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace Binance\Command;
 
-use Binance\ApiConst;
+use Binance\Validator\AbstractValidator;
 use Binance\ValueObject\IntVO;
-use Binance\ValueObject\Price;
 use Binance\ValueObject\RecvWindow;
 use Binance\ValueObject\Text;
-use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
-abstract class AbstractOrderCommand
+abstract class AbstractOrderCommand extends AbstractValidator
 {
-    protected Text $symbol;
+    protected ?Text $symbol;
     protected ?Text $newClientOrderId;
     protected ?RecvWindow $recvWindow;
-    protected IntVO $timestamp;
+    protected ?IntVO $timestamp;
 
     public function __construct()
     {
@@ -24,6 +23,9 @@ abstract class AbstractOrderCommand
             // @todo find better solution
             new IntVO((int)(time() . '000'))
         );
+        $this->setSymbol(null);
+        $this->setNewClientOrderId(null);
+        $this->setRecvWindow(null);
     }
 
     final public function getSymbol(): Text
@@ -31,7 +33,7 @@ abstract class AbstractOrderCommand
         return $this->symbol;
     }
 
-    final public function setSymbol(Text $symbol): self
+    final public function setSymbol(?Text $symbol): self
     {
         $this->symbol = $symbol;
 
@@ -94,17 +96,21 @@ abstract class AbstractOrderCommand
         return $params;
     }
 
-    public function throwIfInvalid(): void
+    public function getValidators(): array
     {
-        if (
-            in_array($this->getType()->getValue(), [
-                ApiConst::ORDER_TYPE_LIMIT,
-                ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
-                ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
-            ], true)
-            && !($this->getPrice() instanceof Price)
-        ) {
-            throw new InvalidArgumentException('Wymagane pole price');
-        }
+        return [
+            'symbol' => new Assert\Required([
+                new Assert\Type('string')
+            ]),
+            'timestamp' => new Assert\Required([
+                new Assert\Type('int')
+            ]),
+            'newClientOrderId' => new Assert\Optional([
+                new Assert\Type('string')
+            ]),
+            'recvWindow' => new Assert\Optional([
+                new Assert\Type('int')
+            ]),
+        ];
     }
 }

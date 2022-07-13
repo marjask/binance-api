@@ -8,7 +8,7 @@ use Binance\ApiConst;
 use Binance\ValueObject\OrderSide;
 use Binance\ValueObject\OrderType;
 
-final class BuyOpenOrderCommand extends AbstractOpenOrderCommand
+final class BuyOpenOrderCommand extends OpenOrderCommand
 {
     public function __construct()
     {
