@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Binance\Command;
 
 use Binance\ApiConst;
+use Binance\Validator\Constraint\AlsoRequired;
+use Binance\Validator\Constraint\AlsoRequiredFieldsIfValueIs;
+use Binance\Validator\Constraint\AlsoRequiredOneFieldOfListIfValueIs;
 use Binance\ValueObject\BooleanVO;
 use Binance\ValueObject\IntVO;
 use Binance\ValueObject\OrderRespType;
@@ -221,62 +224,108 @@ class OpenOrderCommand extends AbstractOrderCommand
         return array_merge($params, parent::getPreparedParams());
     }
 
-//    public function throwIfInvalid(): void
-//    {
-//        if (
-//            in_array($this->getType()->getValue(), [
-//                ApiConst::ORDER_TYPE_LIMIT,
-//                ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
-//                ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
-//            ], true)
-//            && !($this->getPrice() instanceof Price)
-//        ) {
-//            throw new InvalidArgumentException('Wymagane pole price');
-//        }
-//    }
     public function getValidators(): array
     {
         return array_merge(parent::getValidators(), [
             'type' => new Assert\Required([
                 new Assert\NotNull(null, 'Parameter type should be not null.'),
                 new Assert\Type('string', 'Parameter type must be {{ type }}.'),
+                new AlsoRequiredFieldsIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_LIMIT,
+                    'fields' => ['timeInForce', 'quantity', 'price'],
+                ]),
+                new AlsoRequiredOneFieldOfListIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_MARKET,
+                    'fields' => ['quantity', 'quoteOrderQty'],
+                ]),
+                new AlsoRequiredFieldsIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_STOP_LOSS,
+                    'fields' => ['quantity'],
+                ]),
+                new AlsoRequiredOneFieldOfListIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_STOP_LOSS,
+                    'fields' => ['stopPrice', 'trailingDelta'],
+                ]),
+                new AlsoRequiredFieldsIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
+                    'fields' => ['timeInForce', 'quantity', 'price'],
+                ]),
+                new AlsoRequiredOneFieldOfListIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
+                    'fields' => ['stopPrice', 'trailingDelta'],
+                ]),
+                new AlsoRequiredFieldsIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_TAKE_PROFIT,
+                    'fields' => ['quantity'],
+                ]),
+                new AlsoRequiredOneFieldOfListIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
+                    'fields' => ['stopPrice', 'trailingDelta'],
+                ]),
+                new AlsoRequiredFieldsIfValueIs([
+                    'definedValue' => ApiConst::ORDER_TYPE_LIMIT_MARKET,
+                    'fields' => ['quantity', 'price'],
+                ]),
             ]),
             'side' => new Assert\Required([
                 new Assert\NotNull(null, 'Parameter order should be not null.'),
                 new Assert\Type('string', 'Parameter order must be {{ type }}.'),
             ]),
             'quantity' => new Assert\Optional([
-                new Assert\Type('numeric')
+                new Assert\Type('numeric'),
+            ]),
+            'quoteOrderQty' => new Assert\Optional([
+                new Assert\Type('numeric'),
             ]),
             'timeInForce' => new Assert\Optional([
-                new Assert\Type('string')
+                new Assert\Type('string'),
             ]),
             'price' => new Assert\Optional([
-                new Assert\Type('numeric')
+                new Assert\Type('numeric'),
             ]),
             'stopPrice' => new Assert\Optional([
                 new Assert\Type('numeric', 'Parameter stopPrice must be {{ type }}.'),
-                new Assert\Collection([
-                    'stopPrice' => new Assert\Expression([
-                        'expression' => 'root["type"] in [val1, val2, val3, val4]',
-                        'message' => 'Parameter stopPrice used with STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.',
-                        'values' => [
-                            'val1' => ApiConst::ORDER_TYPE_STOP_LOSS,
-                            'val2' => ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
-                            'val3' => ApiConst::ORDER_TYPE_TAKE_PROFIT,
-                            'val4' => ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
-                        ],
-                    ]),
+                new AlsoRequired([
+                    'fields' => ['type'],
+                ]),
+                new AlsoRequired([
+                    'fields' => [
+                        ApiConst::ORDER_TYPE_STOP_LOSS,
+                        ApiConst::ORDER_TYPE_TAKE_PROFIT,
+                        ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
+                        ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
+                    ],
                 ]),
             ]),
             'trailingDelta' => new Assert\Optional([
-                new Assert\Type('numeric')
+                new Assert\Type('numeric'),
+                new AlsoRequired([
+                    'fields' => ['type'],
+                ]),
+                new AlsoRequired([
+                    'fields' => [
+                        ApiConst::ORDER_TYPE_STOP_LOSS,
+                        ApiConst::ORDER_TYPE_TAKE_PROFIT,
+                        ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
+                        ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
+                    ],
+                ]),
             ]),
             'icebergQty' => new Assert\Optional([
-                new Assert\Type('numeric')
+                new Assert\Type('numeric'),
+                new AlsoRequired([
+                    'fields' => ['type'],
+                ]),
+                new AlsoRequired([
+                    'fields' => [
+                        ApiConst::ORDER_TYPE_LIMIT,
+                        ApiConst::ORDER_TYPE_STOP_LOSS_LIMIT,
+                        ApiConst::ORDER_TYPE_TAKE_PROFIT_LIMIT,
+                    ],
+                ]),
             ]),
             'newOrderRespType' => new Assert\Optional([
-                new Assert\Type('string')
+                new Assert\Type('string'),
             ]),
         ]);
     }

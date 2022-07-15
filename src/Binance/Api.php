@@ -29,7 +29,7 @@ class Api
     public function createOrder(OpenOrderCommand $cmd): CreateOrderResponse
     {
 //        dump('ok');
-        $cmd->validate();
+        dd($cmd->validate());
         exit;
 
         [$headers, $output] = $this->client->request(

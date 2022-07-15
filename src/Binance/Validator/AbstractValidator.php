@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 abstract class AbstractValidator
 {
-    public function validate(): array
+    final public function validate(): array
     {
         /**
          * TODO: make validation more elegant!
@@ -30,19 +30,10 @@ abstract class AbstractValidator
             new Collection($this->getValidators())
         );
 
-        dump($violations);
-        exit;
+        $errors = [];
         /** @var ConstraintViolation $violation */
         foreach ($violations as $violation) {
-            $propertyAccessor->setValue(
-                $errors,
-                $violation->getPropertyPath(),
-                $this->getMessageForViolation($violation)
-            );
-        }
-
-        foreach ($errors as $key => $error) {
-            $errors[$key] = [$error];
+            $errors[] = $violation->getMessage();
         }
 
         return $errors;
@@ -71,40 +62,4 @@ abstract class AbstractValidator
     abstract public function getValidators(): array;
 
     abstract public function getPreparedParams(): array;
-
-    private function getMessageForViolation(ConstraintViolation $violation): string
-    {
-        $message = $violation->getMessage();
-        $constraint = $violation->getConstraint();
-
-        if ($constraint instanceof DateTime) {
-            /** @var DateTime $constraint */
-            $message .= " (Format: {$constraint->format})";
-        }
-
-        return $message;
-    }
-
-    private function throwIfPropertyNotExists(string $propertyName): void
-    {
-        if (!property_exists($this, $propertyName)) {
-            throw new RuntimeException(
-                sprintf('Property don\'t exists ' . "get%s()", $propertyName)
-            );
-        }
-    }
-
-    private function throwIfEmptyConstraints(null|array|Constraint $constraint, string $property): void
-    {
-        if (empty($constraint)) {
-            throw new RuntimeException(sprintf('Constraints not exists for %s.', $property));
-        }
-    }
-
-//    public static function loadValidatorMetadata(ClassMetadata $metadata): void
-//    {
-//        foreach (static::getValidators() as $property => $constraint) {
-//            $metadata->addPropertyConstraint($property, $constraint);
-//        }
-//    }
 }
