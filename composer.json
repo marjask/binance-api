@@ -4,7 +4,8 @@
         "symfony/validator": "^6.1"
     },
     "require-dev": {
-        "symfony/var-dumper": "^6.1"
+        "symfony/var-dumper": "^6.1",
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
