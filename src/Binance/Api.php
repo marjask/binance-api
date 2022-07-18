@@ -28,18 +28,16 @@ class Api
 
     public function createOrder(OpenOrderCommand $cmd): CreateOrderResponse
     {
-//        dump('ok');
-        dd($cmd->validate());
-        exit;
+        $cmd->throwIfObjectIsNotValid();
 
         [$headers, $output] = $this->client->request(
             (new Request())
                 ->setMethod(CurlClientConst::POST)
                 ->setPath(
-                    ApiRouter::getOrderUrl($cmd->isTest()->toBoolean())
+                    ApiRouter::getOrderUrl($cmd->getTest()->toBoolean())
                 )
                 ->setParams(
-                    $cmd->getPreparedParams()
+                    $cmd->getParams()
                 )
         );
 
@@ -48,14 +46,14 @@ class Api
 
     public function closeOrder(CloseOrderCommand $cmd): CloseOrderResponse
     {
-        $cmd->throwIfInvalid();
+        $cmd->throwIfObjectIsNotValid();
 
         [$headers, $output] = $this->client->request(
             (new Request())
                 ->setMethod(CurlClientConst::DELETE)
                 ->setPath(ApiRouter::getOrderUrl())
                 ->setParams(
-                    $cmd->getPreparedParams()
+                    $cmd->getParams()
                 )
         );
 
@@ -64,14 +62,14 @@ class Api
 
     public function closeAllOpenOrdersOnSymbol(CloseAllOpenOrdersCommand $cmd): CloseOrderResponse
     {
-        $cmd->throwIfInvalid();
+        $cmd->throwIfObjectIsNotValid();
 
         [$headers, $output] = $this->client->request(
             (new Request())
                 ->setMethod(CurlClientConst::DELETE)
                 ->setPath(ApiRouter::getCancelAllOpenOrdersOnSymbolUrl())
                 ->setParams(
-                    $cmd->getPreparedParams()
+                    $cmd->getParams()
                 )
         );
 

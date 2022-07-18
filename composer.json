@@ -1,7 +1,8 @@
 {
     "name": "marjask/binance-api",
     "require": {
-        "symfony/validator": "^6.1"
+        "symfony/validator": "^6.1",
+        "ext-curl": "*"
     },
     "require-dev": {
         "symfony/var-dumper": "^6.1",

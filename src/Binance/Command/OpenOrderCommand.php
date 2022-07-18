@@ -37,16 +37,6 @@ class OpenOrderCommand extends AbstractOrderCommand
         parent::__construct();
 
         $this->setTest(new BooleanVO(false));
-        $this->setSide(null);
-        $this->setType(null);
-        $this->setQuantity(null);
-        $this->setTimeInForce(null);
-        $this->setQuoteOrderQty(null);
-        $this->setPrice(null);
-        $this->setStopPrice(null);
-        $this->setTrailingDelta(null);
-        $this->setIcebergQty(null);
-        $this->setNewOrderRespType(null);
     }
 
     final public function getSide(): ?OrderSide
@@ -179,49 +169,6 @@ class OpenOrderCommand extends AbstractOrderCommand
         $this->newOrderRespType = $newOrderRespType;
 
         return $this;
-    }
-
-    public function getPreparedParams(): array
-    {
-        // @todo find better solution
-        $params = [
-            'side' => $this->getSide()->getValue(),
-            'type' => $this->getType()->getValue(),
-        ];
-
-        if ($this->getQuantity() instanceof FloatVO) {
-            $params['quantity'] = $this->getQuantity()->getValue();
-        }
-
-        if ($this->getTimeInForce() instanceof Text) {
-            $params['timeInForce'] = $this->getTimeInForce()->getValue();
-        }
-
-        if ($this->getQuoteOrderQty() instanceof FloatVO) {
-            $params['quoteOrderQty'] = $this->getQuoteOrderQty()->getValue();
-        }
-
-        if ($this->getPrice() instanceof Price) {
-            $params['price'] = $this->getPrice()->getValue();
-        }
-
-        if ($this->getStopPrice() instanceof Price) {
-            $params['stopPrice'] = $this->getStopPrice()->getValue();
-        }
-
-        if ($this->getTrailingDelta() instanceof Price) {
-            $params['trailingDelta'] = $this->getStopPrice()->getValue();
-        }
-
-        if ($this->getIcebergQty() instanceof FloatVO) {
-            $params['icebergQty'] = $this->getIcebergQty()->getValue();
-        }
-
-        if ($this->getNewOrderRespType() instanceof OrderRespType) {
-            $params['newOrderRespType'] = $this->getNewOrderRespType()->getValue();
-        }
-
-        return array_merge($params, parent::getPreparedParams());
     }
 
     public function getValidators(): array

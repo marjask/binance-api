@@ -23,12 +23,9 @@ abstract class AbstractOrderCommand extends AbstractValidator
             // @todo find better solution
             new IntVO((int)(time() . '000'))
         );
-        $this->setSymbol(null);
-        $this->setNewClientOrderId(null);
-        $this->setRecvWindow(null);
     }
 
-    final public function getSymbol(): Text
+    final public function getSymbol(): ?Text
     {
         return $this->symbol;
     }
@@ -75,25 +72,6 @@ abstract class AbstractOrderCommand extends AbstractValidator
         $this->timestamp = $timestamp;
 
         return $this;
-    }
-
-    public function getPreparedParams(): array
-    {
-        // @todo find better solution
-        $params = [
-            'symbol' => $this->getSymbol()->getValue(),
-            'timestamp' => $this->getTimestamp()->getValue(),
-        ];
-
-        if ($this->getNewClientOrderId() instanceof Text) {
-            $params['newClientOrderId'] = $this->getNewClientOrderId()->getValue();
-        }
-
-        if ($this->getRecvWindow() instanceof RecvWindow) {
-            $params['recvWindow'] = $this->getRecvWindow()->getValue();
-        }
-
-        return $params;
     }
 
     public function getValidators(): array

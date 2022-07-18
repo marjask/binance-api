@@ -7,7 +7,7 @@ namespace Binance\Command;
 use Binance\ValueObject\Id;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class CloseOrderCommand extends AbstractOrderCommand
+final class OrderDetailsQuery extends AbstractOrderCommand
 {
     protected ?Id $orderId;
     protected ?Id $origClientOrderId;

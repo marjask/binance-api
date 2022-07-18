@@ -4,17 +4,26 @@ declare(strict_types=1);
 
 namespace Binance\Validator;
 
-use Exception;
 use RuntimeException;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Collection;
-use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
+use Trait\ToArrayTrait;
 
 abstract class AbstractValidator
 {
+    use ToArrayTrait;
+
+    private array $errors = [];
+
+    abstract public function getValidators(): array;
+
+    final public function getParams(): array
+    {
+        return $this->toArray();
+    }
+
     final public function validate(): array
     {
         /**
@@ -24,9 +33,9 @@ abstract class AbstractValidator
         /** @var RecursiveValidator $validator */
         $validator = Validation::createValidatorBuilder()
             ->getValidator();
-//        dump($this->getValidators(), $this->getPreparedParams());
+
         $violations = $validator->validate(
-            $this->getPreparedParams(),
+            $this->getParams(),
             new Collection($this->getValidators())
         );
 
@@ -36,7 +45,7 @@ abstract class AbstractValidator
             $errors[] = $violation->getMessage();
         }
 
-        return $errors;
+        return $this->errors = $errors;
     }
 
     public function getErrors(): array
@@ -44,22 +53,18 @@ abstract class AbstractValidator
         return $this->errors;
     }
 
-    public function isValid(array $requestBody): bool
+    public function isValid(): bool
     {
-        return empty($this->validate($requestBody));
+        return empty($this->validate());
     }
 
     /**
-     * @throws Exception
+     * @throws RuntimeException
      */
-    public function throwIfRequestBodyIsNotValid(array $requestBody): void
+    public function throwIfObjectIsNotValid(): void
     {
-        if (!$this->isValid($requestBody)) {
-            throw new Exception(implode(', ', $this->getErrors()));
+        if (!$this->isValid()) {
+            throw new RuntimeException(implode(', ', $this->getErrors()));
         }
     }
-
-    abstract public function getValidators(): array;
-
-    abstract public function getPreparedParams(): array;
 }
