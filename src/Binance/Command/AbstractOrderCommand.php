@@ -78,16 +78,16 @@ abstract class AbstractOrderCommand extends AbstractValidator
     {
         return [
             'symbol' => new Assert\Required([
-                new Assert\Type('string')
+                new Assert\Type('string'),
             ]),
             'timestamp' => new Assert\Required([
-                new Assert\Type('int')
+                new Assert\Type('int'),
             ]),
             'newClientOrderId' => new Assert\Optional([
-                new Assert\Type('string')
+                new Assert\Type('string'),
             ]),
             'recvWindow' => new Assert\Optional([
-                new Assert\Type('int')
+                new Assert\Type('int'),
             ]),
         ];
     }

@@ -276,4 +276,13 @@ class OpenOrderCommand extends AbstractOrderCommand
             ]),
         ]);
     }
+
+    protected function getIgnorePropertyList(): array
+    {
+        return array_merge(
+            parent::getIgnorePropertyList(), [
+                'test',
+            ]
+        );
+    }
 }

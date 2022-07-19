@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Binance\Command;
 
+use Binance\Validator\Constraint\AtLeastOneOfFields;
 use Binance\ValueObject\Id;
+use Binance\ValueObject\Text;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class CloseOrderCommand extends AbstractOrderCommand
 {
     protected ?Id $orderId;
-    protected ?Id $origClientOrderId;
+    protected ?Text $origClientOrderId;
 
     public function getOrderId(): Id
     {
@@ -24,12 +26,12 @@ final class CloseOrderCommand extends AbstractOrderCommand
         return $this;
     }
 
-    public function getOrigClientOrderId(): Id
+    public function getOrigClientOrderId(): Text
     {
         return $this->origClientOrderId;
     }
 
-    public function setOrigClientOrderId(Id $origClientOrderId): self
+    public function setOrigClientOrderId(Text $origClientOrderId): self
     {
         $this->origClientOrderId = $origClientOrderId;
 
@@ -38,15 +40,21 @@ final class CloseOrderCommand extends AbstractOrderCommand
 
     public function getValidators(): array
     {
-        return array_merge(
-            parent::getValidators(), [
+        return [
+            'fields' => array_merge(parent::getValidators(), [
                 'orderId' => new Assert\Optional([
-                    new Assert\Type('int')
+                    new Assert\Type('int'),
                 ]),
                 'origClientOrderId' => new Assert\Optional([
-                    new Assert\Type('string')
+                    new Assert\Type('string'),
                 ]),
-            ]
-        );
+                'symbol' => new Assert\Required([
+                    new Assert\Type('string'),
+                    new AtLeastOneOfFields([
+                        'fields' => ['orderId', 'origClientOrderId'],
+                    ]),
+                ]),
+            ]),
+        ];
     }
 }

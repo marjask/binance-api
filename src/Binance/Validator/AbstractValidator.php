@@ -7,6 +7,7 @@ namespace Binance\Validator;
 use RuntimeException;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 use Trait\ToArrayTrait;
@@ -15,7 +16,9 @@ abstract class AbstractValidator
 {
     use ToArrayTrait;
 
-    private array $errors = [];
+    private array $errors;
+
+    private ConstraintViolationListInterface $violations;
 
     abstract public function getValidators(): array;
 
@@ -34,14 +37,16 @@ abstract class AbstractValidator
         $validator = Validation::createValidatorBuilder()
             ->getValidator();
 
-        $violations = $validator->validate(
+        $this->violations = $validator->validate(
             $this->getParams(),
-            new Collection($this->getValidators())
+            new Collection(
+                $this->getValidators()
+            )
         );
 
         $errors = [];
         /** @var ConstraintViolation $violation */
-        foreach ($violations as $violation) {
+        foreach ($this->violations as $violation) {
             $errors[] = $violation->getMessage();
         }
 
@@ -58,6 +63,11 @@ abstract class AbstractValidator
         return empty($this->validate());
     }
 
+    public function getViolations(): ConstraintViolationListInterface
+    {
+        return $this->violations;
+    }
+
     /**
      * @throws RuntimeException
      */
@@ -66,5 +76,13 @@ abstract class AbstractValidator
         if (!$this->isValid()) {
             throw new RuntimeException(implode(', ', $this->getErrors()));
         }
+    }
+
+    protected function getIgnorePropertyList(): array
+    {
+        return [
+            'errors',
+            'violations',
+        ];
     }
 }

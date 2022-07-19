@@ -6,5 +6,4 @@ namespace Binance\Command;
 
 final class CloseAllOpenOrdersCommand extends AbstractOrderCommand
 {
-
 }
