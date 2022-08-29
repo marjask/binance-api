@@ -9,6 +9,7 @@ class Request
     private string $path;
     private string $method;
     private array $params;
+    private bool $signature = true;
 
     public function getPath(): string
     {
@@ -42,6 +43,18 @@ class Request
     public function setParams(array $params): self
     {
         $this->params = $params;
+
+        return $this;
+    }
+
+    public function isSignature(): bool
+    {
+        return $this->signature;
+    }
+
+    public function setSignature(bool $signature): Request
+    {
+        $this->signature = $signature;
 
         return $this;
     }

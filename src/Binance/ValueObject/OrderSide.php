@@ -7,16 +7,27 @@ namespace Binance\ValueObject;
 use Binance\ApiConst;
 use InvalidArgumentException;
 
-class OrderSide extends AbstractVO
+class OrderSide extends AbstractValueObject
 {
-    private const LIST = ApiConst::ORDER_SIDES;
+    public const ORDER_SIDE_BUY = 'BUY';
+    public const ORDER_SIDE_SELL = 'SELL';
+
+    public const ORDER_SIDES = [
+        self::ORDER_SIDE_BUY,
+        self::ORDER_SIDE_SELL,
+    ];
 
     public function __construct(string $value)
     {
-        if (!in_array($value, self::LIST)) {
+        if (!in_array($value, self::ORDER_SIDES)) {
             throw new InvalidArgumentException(sprintf('Invalid order side %s', $value));
         }
 
         $this->setValue($value);
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
     }
 }

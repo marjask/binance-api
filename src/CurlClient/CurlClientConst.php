@@ -11,11 +11,12 @@ final class CurlClientConst
     public const DELETE = 'DELETE';
     public const PUT = 'PUT';
 
-
     public const METHODS = [
         self::GET,
         self::POST,
         self::PUT,
         self::DELETE,
     ];
+
+    public const HTTP_204 = 204;
 }

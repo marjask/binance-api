@@ -4,33 +4,34 @@ declare(strict_types=1);
 
 namespace Binance\Command;
 
-use Binance\Validator\AbstractValidator;
-use Binance\ValueObject\IntVO;
 use Binance\ValueObject\RecvWindow;
+use Binance\ValueObject\Symbol;
 use Binance\ValueObject\Text;
-use Symfony\Component\Validator\Constraints as Assert;
+use Binance\ValueObject\Timestamp;
+use Trait\ToArray\ToArrayTrait;
 
-abstract class AbstractOrderCommand extends AbstractValidator
+abstract class AbstractOrderCommand
 {
-    protected ?Text $symbol;
+    use ToArrayTrait;
+
+    protected Symbol $symbol;
+    protected Timestamp $timestamp;
     protected ?Text $newClientOrderId;
     protected ?RecvWindow $recvWindow;
-    protected ?IntVO $timestamp;
 
     public function __construct()
     {
         $this->setTimestamp(
-            // @todo find better solution
-            new IntVO((int)(time() . '000'))
+            new Timestamp()
         );
     }
 
-    final public function getSymbol(): ?Text
+    final public function getSymbol(): Symbol
     {
         return $this->symbol;
     }
 
-    final public function setSymbol(?Text $symbol): self
+    final public function setSymbol(Symbol $symbol): self
     {
         $this->symbol = $symbol;
 
@@ -61,34 +62,15 @@ abstract class AbstractOrderCommand extends AbstractValidator
         return $this;
     }
 
-
-    final public function getTimestamp(): IntVO
+    final public function getTimestamp(): Timestamp
     {
         return $this->timestamp;
     }
 
-    final public function setTimestamp(IntVO $timestamp): self
+    final public function setTimestamp(Timestamp $timestamp): self
     {
         $this->timestamp = $timestamp;
 
         return $this;
-    }
-
-    public function getValidators(): array
-    {
-        return [
-            'symbol' => new Assert\Required([
-                new Assert\Type('string'),
-            ]),
-            'timestamp' => new Assert\Required([
-                new Assert\Type('int'),
-            ]),
-            'newClientOrderId' => new Assert\Optional([
-                new Assert\Type('string'),
-            ]),
-            'recvWindow' => new Assert\Optional([
-                new Assert\Type('int'),
-            ]),
-        ];
     }
 }

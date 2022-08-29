@@ -4,37 +4,92 @@ declare(strict_types=1);
 
 namespace Binance\Collection;
 
-use InvalidArgumentException;
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
+use RuntimeException;
+use Trait\ToArray\ToArrayTrait;
 
-abstract class AbstractCollection
+abstract class AbstractCollection implements Countable, IteratorAggregate
 {
-    protected array $collection = [];
-    protected string $collectionType;
+    use ToArrayTrait;
+
+    protected array $collection;
+    private string $collectionType;
 
     abstract protected function getCollectionType(): string;
 
-    public function addToCollection($collectionItem, $key = null): self
+    final public function __construct()
     {
-        $this->checkIfDoesMatchCollectionType($collectionItem);
+        $this->collectionType = $this->getCollectionType();
 
-        if (null === $key) {
-            $this->collection[] = $collectionItem;
-        } else {
-            $this->collection[$key] = $collectionItem;
+        if (!class_exists($this->collectionType)
+            && !interface_exists($this->collectionType)
+        ) {
+            throw new RuntimeException(
+                "Class/interface \"$this->collectionType\" doesn't exists."
+            );
         }
-
-        return $this;
     }
 
-    private function checkIfDoesMatchCollectionType($collectionItem): void
+    public static function fromArray(array $items): static
     {
-        if (!$collectionItem instanceof $this->collectionType) {
-            throw new InvalidArgumentException(sprintf(
-                'CollectionItem must be typeof %s. Given: %s',
-                $this->collectionType,
-                is_object($collectionItem)
-                    ? get_class($collectionItem) : gettype($collectionItem)
-            ));
+        $collection = new static();
+
+        foreach ($items as $item) {
+            $collection->add($item);
+        }
+
+        return $collection;
+    }
+
+    public function asArray(): array
+    {
+        return $this->collection;
+    }
+
+    public function count(): int
+    {
+        return count($this->collection);
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->collection);
+    }
+
+    public function mergeWith(self $other): static
+    {
+        return self::fromArray(
+            array_merge(
+                $this->asArray(),
+                $other->asArray()
+            )
+        );
+    }
+
+    public function add($item): void
+    {
+        $this->throwIfInvalidCollectionType($item);
+
+        $this->collection[] = $item;
+    }
+
+    final public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->collection);
+    }
+
+    private function throwIfInvalidCollectionType($item): void
+    {
+        if (!$item instanceof $this->collectionType) {
+            throw new RuntimeException(
+                sprintf(
+                    'CollectionItem must be typeof %s. Given: %s',
+                    $this->collectionType,
+                    is_object($item) ? get_class($item) : gettype($item)
+                )
+            );
         }
     }
 }

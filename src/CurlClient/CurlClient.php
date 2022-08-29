@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace CurlClient;
 
 use Binance\ApiConst;
+use CurlClient\Exception\ResponseErrorException;
 use CurlClient\Query\Request;
+use CurlClient\RequestLogger\Command\CreateRequestLogCommand;
+use CurlClient\RequestLogger\Logger;
+use CurlClient\Response\Response;
+use CurlClient\Response\ResponseFactory;
 use CurlClient\Utils\Helper;
+use DateTime;
 use RuntimeException;
 
 final class CurlClient
@@ -16,12 +22,12 @@ final class CurlClient
     private string $apiKey;
     private string $apiSecret;
     private int $timeout;
+    private Logger $logger;
 
-    public function __construct(array $config)
+    public function __construct(array $config, Logger $logger)
     {
-        if (!empty($config)) {
-            $this->setConfig($config);
-        }
+        $this->setConfig($config);
+        $this->logger = $logger;
     }
 
     public function setConfig(array $config): void
@@ -45,9 +51,10 @@ final class CurlClient
         $this->timeout = $config['timeout'] ?? 60;
     }
 
-    public function request(Request $request): array
+    public function request(Request $request): Response
     {
-        $this->throwIfEmptyApiKeyOrApiSecret();
+        $startTime = microtime(true);
+        $logCommand = new CreateRequestLogCommand();
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_VERBOSE, $this->debug);
@@ -70,47 +77,73 @@ final class CurlClient
 
         $parameters = $request->getParams();
         $query = Helper::getPreparedQueryUrl($parameters);
+        $logCommand
+            ->setQuery($query)
+            ->setParameters($parameters);
         $signature = hash_hmac(ApiConst::ALGORITHM, $query, $this->apiSecret);
 
         if ($request->getMethod() === CurlClientConst::POST) {
             $endpoint = $this->url . $request->getPath();
-            $parameters['signature'] = $signature;
-            $query = Helper::getPreparedQueryUrl($parameters);
+
+            if ($request->isSignature()) {
+                $parameters['signature'] = $signature;
+                $query = Helper::getPreparedQueryUrl($parameters);
+            }
+
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $query);
         } else {
-            $endpoint = $this->url . $request->getPath() . '?' . $query . '&signature=' . $signature;
+            $endpoint = $this->url . $request->getPath() . '?' . $query;
+            $endpoint .= $request->isSignature() ? '&signature=' . $signature : '';
         }
 
         curl_setopt($curl, CURLOPT_URL, $endpoint);
 
         $output = curl_exec($curl);
+        $responseCode = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+
+        $this->logger->logRequest(
+            $logCommand
+                ->setDebug($this->debug)
+                ->setTimeout($this->timeout)
+                ->setMethod($request->getMethod())
+                ->setPath($request->getPath())
+                ->setResponse($output)
+                ->setDateTime(
+                    new DateTime()
+                )
+                ->setError(
+                    curl_errno($curl) > 0 ? curl_error($curl) : null
+                )
+                ->setResponseCode($responseCode)
+                ->setRequestTime(
+                    $this->getRequestTime($startTime)
+                )
+        );
 
         if (curl_errno($curl) > 0) {
-            // should always output error, not only on httpdebug
-            // not outputing errors, hides it from users and ends up with tickets on github
             throw new RuntimeException('Curl error: ' . curl_error($curl));
         }
 
         $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $header = Helper::getHeadersFromCurlResponse($output);
+        $headers = Helper::getHeadersFromCurlResponse($output);
         $output = substr($output, $headerSize);
 
         curl_close($curl);
 
-        $json = json_decode($output, true);
+        $data = json_decode($output, true);
 
-        return [$header, $json];
+        if ($responseCode > CurlClientConst::HTTP_204) {
+            throw new ResponseErrorException(
+                ResponseFactory::createResponseError($headers, $data)
+            );
+        }
+
+        return ResponseFactory::create($headers, $data);
     }
 
-    private function throwIfEmptyApiKeyOrApiSecret(): void
+    private function getRequestTime(float $start): float
     {
-        if (empty($this->apiKey)) {
-            throw new RuntimeException('Api Key not exists!');
-        }
-
-        if (empty($this->apiSecret)) {
-            throw new RuntimeException('Api Secret not exists!');
-        }
+        return round(microtime(true) - $start, 2);
     }
 }

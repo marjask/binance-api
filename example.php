@@ -3,8 +3,8 @@
 use Binance\Api;
 use Binance\ApiConfig;
 use Binance\ApiConst;
-use Binance\Command\BuyOpenOrderCommand;
-use Binance\Command\SellOpenOrderCommand;
+use Binance\Command\BuyNewOrderCommand;
+use Binance\Command\SellNewOrderCommand;
 use Binance\ValueObject\OrderType;
 use Binance\ValueObject\Text;
 
@@ -16,14 +16,14 @@ $api = new Api(
         ->setTestnetEnable(true)
 );
 
-$api->createOrder(
-    (new BuyOpenOrderCommand())
+$api->newOrder(
+    (new BuyNewOrderCommand())
         ->setSymbol(new Text('SHIBUSDT'))
-        ->setType(new OrderType(ApiConst::ORDER_TYPE_MARKET))
+        ->setType(new OrderType(OrderType::ORDER_TYPE_MARKET))
 );
 
-$api->createOrder(
-    (new SellOpenOrderCommand())
+$api->newOrder(
+    (new SellNewOrderCommand())
         ->setSymbol(new Text('SHIBUSDT'))
-        ->setType(new OrderType(ApiConst::ORDER_TYPE_MARKET))
+        ->setType(new OrderType(OrderType::ORDER_TYPE_MARKET))
 );
