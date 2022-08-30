@@ -24,6 +24,9 @@ abstract class AbstractOrderCommand
         $this->setTimestamp(
             new Timestamp()
         );
+
+        $this->newClientOrderId = null;
+        $this->recvWindow = null;
     }
 
     final public function getSymbol(): Symbol

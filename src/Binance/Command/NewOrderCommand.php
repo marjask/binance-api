@@ -38,6 +38,16 @@ class NewOrderCommand extends AbstractOrderCommand
         parent::__construct();
 
         $this->setTest(new Boolean(false));
+        $this->quantity = null;
+        $this->timeInForce = null;
+        $this->quoteOrderQty = null;
+        $this->price = null;
+        $this->stopPrice = null;
+        $this->trailingDelta = null;
+        $this->icebergQty = null;
+        $this->newOrderRespType = null;
+        $this->strategyId = null;
+        $this->strategyType = null;
     }
 
     final public function getSide(): ?OrderSide
@@ -90,7 +100,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     final public function getTest(): ?Boolean
     {
-        return $this->test ?? null;
+        return $this->test;
     }
 
     final public function setTest(?Boolean $test): self
@@ -102,7 +112,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     final public function getTimeInForce(): ?TimeInForce
     {
-        return $this->timeInForce ?? null;
+        return $this->timeInForce;
     }
 
     final public function setTimeInForce(?TimeInForce $timeInForce): self
@@ -114,7 +124,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     final public function getQuoteOrderQty(): ?Real
     {
-        return $this->quoteOrderQty ?? null;
+        return $this->quoteOrderQty;
     }
 
     final public function setQuoteOrderQty(?Real $quoteOrderQty): self
@@ -126,7 +136,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     final public function getStopPrice(): ?Price
     {
-        return $this->stopPrice ?? null;
+        return $this->stopPrice;
     }
 
     final public function setStopPrice(?Price $stopPrice): self
@@ -138,7 +148,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     final public function getTrailingDelta(): ?Integer
     {
-        return $this->trailingDelta ?? null;
+        return $this->trailingDelta;
     }
 
     final public function setTrailingDelta(?Integer $trailingDelta): self
@@ -150,7 +160,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     final public function getIcebergQty(): ?Real
     {
-        return $this->icebergQty ?? null;
+        return $this->icebergQty;
     }
 
     final public function setIcebergQty(?Real $icebergQty): self
@@ -162,7 +172,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     final public function getNewOrderRespType(): ?OrderRespType
     {
-        return $this->newOrderRespType ?? null;
+        return $this->newOrderRespType;
     }
 
     final public function setNewOrderRespType(?OrderRespType $newOrderRespType): self
@@ -174,7 +184,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     public function getStrategyId(): ?Id
     {
-        return $this->strategyId ?? null;
+        return $this->strategyId;
     }
 
     public function setStrategyId(?Id $strategyId): NewOrderCommand
@@ -186,7 +196,7 @@ class NewOrderCommand extends AbstractOrderCommand
 
     public function getStrategyType(): ?StrategyType
     {
-        return $this->strategyType ?? null;
+        return $this->strategyType;
     }
 
     public function setStrategyType(?StrategyType $strategyType): NewOrderCommand

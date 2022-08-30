@@ -15,6 +15,12 @@ final class ExchangeInformationQuery
     protected ?Symbol $symbol;
     protected ?SymbolCollection $symbols;
 
+    public function __construct()
+    {
+        $this->symbol = null;
+        $this->symbols = null;
+    }
+
     public function getSymbol(): ?Symbol
     {
         return $this->symbol;

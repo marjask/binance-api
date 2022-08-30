@@ -18,6 +18,17 @@ class AllOrdersQuery extends GeneralOrderQuery
     protected ?Integer $limit;
     protected ?RecvWindow $recvWindow;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->orderId = null;
+        $this->startTime = null;
+        $this->endTime = null;
+        $this->limit = null;
+        $this->recvWindow = null;
+    }
+
     public function getSymbol(): Symbol
     {
         return $this->symbol;

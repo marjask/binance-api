@@ -16,6 +16,15 @@ final class OrderQuery extends GeneralOrderQuery
     protected ?Text $origClientOrderId;
     protected ?RecvWindow $recvWindow;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->orderId = null;
+        $this->origClientOrderId = null;
+        $this->recvWindow = null;
+    }
+
     public function getOrderId(): Id
     {
         return $this->orderId;

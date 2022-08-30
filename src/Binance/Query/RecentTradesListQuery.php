@@ -15,6 +15,11 @@ final class RecentTradesListQuery
     protected Symbol $symbol;
     protected ?Integer $limit;
 
+    public function __construct()
+    {
+        $this->limit = null;
+    }
+
     public function getSymbol(): Symbol
     {
         return $this->symbol;

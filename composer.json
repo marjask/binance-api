@@ -1,6 +1,6 @@
 {
     "name": "marjask/binance-api",
-    "description": "Binance API is a PHP library based on CQS and Value Objects. Contains validation of parameters sent to API binance according to the documentation.",
+    "description": "Binance API is a PHP library based on simplified CQRS and Value Objects. Contains validation of parameters sent to API binance according to the documentation.",
     "type": "library",
     "license": "MIT",
     "require": {
@@ -24,9 +24,18 @@
             "Test\\": "Test"
         }
     },
+    "prefer-stable": true,
+    "minimum-stability": "stable",
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
     "scripts": {
         "tests": [
             "php vendor/bin/phpunit Test"
+        ],
+        "phpstan": [
+            "php vendor/bin/phpstan"
         ]
     }
 }

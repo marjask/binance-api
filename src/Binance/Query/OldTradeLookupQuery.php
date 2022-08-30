@@ -17,6 +17,12 @@ final class OldTradeLookupQuery
     protected ?Integer $limit;
     protected ?Id $fromId;
 
+    public function __construct()
+    {
+        $this->limit = null;
+        $this->fromId = null;
+    }
+
     public function getSymbol(): Symbol
     {
         return $this->symbol;

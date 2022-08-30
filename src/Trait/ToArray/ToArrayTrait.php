@@ -34,9 +34,9 @@ trait ToArrayTrait
                 $result[$name] = $value->toString();
             } else if (is_object($value) && method_exists($value, 'toArray')) {
                 $result[$name] = $value->toArray();
-            } elseif ($value instanceof AbstractValueObject) {
+            } elseif ($value instanceof AbstractValueObject && !is_null($value->getValue())) {
                 $result[$name] = $value->getValue();
-            } else {
+            } else if (!is_null($value)) {
                 $result[$name] = $value;
             }
         }

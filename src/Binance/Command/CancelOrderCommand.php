@@ -12,6 +12,14 @@ final class CancelOrderCommand extends AbstractOrderCommand
     protected ?Id $orderId;
     protected ?Text $origClientOrderId;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->orderId = null;
+        $this->origClientOrderId = null;
+    }
+
     public function getOrderId(): Id
     {
         return $this->orderId;

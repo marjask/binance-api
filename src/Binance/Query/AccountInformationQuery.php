@@ -10,6 +10,13 @@ final class AccountInformationQuery extends GeneralOrderQuery
 {
     protected ?RecvWindow $recvWindow;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->recvWindow = null;
+    }
+
     public function getRecvWindow(): ?RecvWindow
     {
         return $this->recvWindow;

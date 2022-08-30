@@ -12,6 +12,13 @@ class CurrentOpenOrdersQuery extends GeneralOrderQuery
     protected Symbol $symbol;
     protected ?RecvWindow $recvWindow;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->recvWindow = null;
+    }
+
     public function getSymbol(): Symbol
     {
         return $this->symbol;

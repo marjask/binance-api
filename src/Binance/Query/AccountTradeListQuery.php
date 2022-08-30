@@ -10,6 +10,13 @@ final class AccountTradeListQuery extends AllOrdersQuery
 {
     protected ?Id $fromId;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->fromId = null;
+    }
+
     public function getFromId(): ?Id
     {
         return $this->fromId;
