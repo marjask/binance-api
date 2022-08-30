@@ -21,7 +21,7 @@ final class OrderRespType extends AbstractValueObject
 
     public function __construct(string $value)
     {
-        if (!in_array($value, self::ORDER_RESP_TYPES)) {
+        if (!in_array($value, self::ORDER_RESP_TYPES, true)) {
             throw new InvalidArgumentException(sprintf('Invalid order resp type %s', $value));
         }
 

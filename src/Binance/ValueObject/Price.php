@@ -8,13 +8,19 @@ use InvalidArgumentException;
 
 class Price extends AbstractValueObject
 {
-    public function __construct(string $value)
+    public function __construct(mixed $value)
     {
-        if (!is_numeric($value)) {
+        if (!is_numeric($value) || $value <= 0) {
             throw new InvalidArgumentException('Invalid price');
         }
 
-        $this->setValue($value);
+        $stringValue = (string)$value;
+
+        if ($stringValue != $value) {
+            throw new InvalidArgumentException('Cannot convert value "'. $value . '" to numeric.');
+        }
+
+        $this->setValue($stringValue);
     }
 
     public function getValue(): string

@@ -19,7 +19,7 @@ class OrderSide extends AbstractValueObject
 
     public function __construct(string $value)
     {
-        if (!in_array($value, self::ORDER_SIDES)) {
+        if (!in_array($value, self::ORDER_SIDES, true)) {
             throw new InvalidArgumentException(sprintf('Invalid order side %s', $value));
         }
 

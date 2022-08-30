@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 class Real extends AbstractValueObject
 {
-    public function __construct($value)
+    public function __construct(mixed $value)
     {
         if (is_string($value) && is_int(strpos($value, ',')) && !is_int(strpos($value, '.'))) {
             $value = str_replace(',', '.', $value);

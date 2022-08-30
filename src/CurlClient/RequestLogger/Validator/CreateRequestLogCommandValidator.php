@@ -61,6 +61,10 @@ final class CreateRequestLogCommandValidator extends AbstractValidator
             new Type(
                 new OptionType('int')
             )
+        )->addConstraint('requestTime',
+            new Type(
+                new OptionType('float')
+            )
         );
     }
 }

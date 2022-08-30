@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Binance\ValueObject;
 
-class BooleanValueObject extends AbstractValueObject
+class Boolean extends AbstractValueObject
 {
     public function __construct(bool $value)
     {

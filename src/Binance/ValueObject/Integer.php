@@ -8,23 +8,23 @@ use InvalidArgumentException;
 
 class Integer extends AbstractValueObject
 {
-    public function __construct(mixed $seconds)
+    public function __construct(mixed $value)
     {
-        if (!is_numeric($seconds)) {
-            if (is_object($seconds)) {
-                throw new InvalidArgumentException('Cannot convert value of class "' . get_class($seconds) . '" to an integer.');
+        if (!is_numeric($value)) {
+            if (is_object($value)) {
+                throw new InvalidArgumentException('Cannot convert value of class "' . get_class($value) . '" to an integer.');
             } else {
-                throw new InvalidArgumentException('Cannot convert value of type "' . gettype($seconds) . '" to an integer.');
+                throw new InvalidArgumentException('Cannot convert value of type "' . gettype($value) . '" to an integer.');
             }
         }
 
-        $intValue = (int)(string)$seconds;
+        $intValue = (int)(string)$value;
 
-        if ((string)$intValue != (string)$seconds) {
-            throw new InvalidArgumentException('Cannot convert value "'. $seconds . '" to an integer.');
+        if ((string)$intValue != (string)$value) {
+            throw new InvalidArgumentException('Cannot convert value "'. $value . '" to an integer.');
         }
 
-        $this->setValue($seconds);
+        $this->setValue($intValue);
     }
 
     public function getValue(): int

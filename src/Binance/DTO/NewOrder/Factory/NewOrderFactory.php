@@ -27,7 +27,7 @@ final class NewOrderFactory
         if ($type instanceof OrderType && in_array($type->getValue(), [
             OrderType::ORDER_TYPE_LIMIT,
             OrderType::ORDER_TYPE_MARKET,
-        ])) {
+        ], true)) {
             return new NewOrderFullDTOFactory();
         }
 

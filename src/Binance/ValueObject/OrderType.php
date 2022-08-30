@@ -29,7 +29,7 @@ class OrderType extends AbstractValueObject
 
     public function __construct(string $value)
     {
-        if (!in_array($value, self::ORDER_TYPES)) {
+        if (!in_array($value, self::ORDER_TYPES, true)) {
             throw new InvalidArgumentException(sprintf('Invalid stop price value %s', $value));
         }
 

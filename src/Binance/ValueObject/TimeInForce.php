@@ -19,13 +19,13 @@ final class TimeInForce extends Text
     {
         $this->throwIfNotValid($value);
 
-        $this->setValue($value);
+        parent::__construct($value);
     }
 
     private function throwIfNotValid(string $value)
     {
-        if (!in_array($value, self::TIME_IN_FORCE_LIST)) {
-            throw new InvalidArgumentException('Invalid value');
+        if (!in_array($value, self::TIME_IN_FORCE_LIST, true)) {
+            throw new InvalidArgumentException('Invalid timeInForce value');
         }
     }
 }

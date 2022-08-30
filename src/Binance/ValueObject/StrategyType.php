@@ -10,12 +10,17 @@ class StrategyType extends Integer
 {
     private const MAX_VALUE = 1000000;
 
-    public function __construct(int $seconds)
+    public function __construct(int $value)
     {
-        if ($seconds >= self::MAX_VALUE) {
-            throw new InvalidArgumentException('The value cannot be greater than 60000');
+        if ($value > self::MAX_VALUE) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'The value cannot be greater than %s.',
+                    self::MAX_VALUE
+                )
+            );
         }
 
-        parent::__construct($seconds);
+        parent::__construct($value);
     }
 }

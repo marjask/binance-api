@@ -52,7 +52,7 @@ class Request
         return $this->signature;
     }
 
-    public function setSignature(bool $signature): Request
+    public function setSignature(bool $signature): self
     {
         $this->signature = $signature;
 
