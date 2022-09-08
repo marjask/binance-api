@@ -75,6 +75,16 @@ abstract class AbstractCollection implements Countable, IteratorAggregate
         $this->collection[] = $item;
     }
 
+    public function first(): mixed
+    {
+        return reset($this->collection);
+    }
+
+    public function last(): mixed
+    {
+        return end($this->collection);
+    }
+
     final public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->collection);

@@ -106,4 +106,12 @@ final class ApiRouter
     {
         return self::API_V3 . '/rateLimit/order';
     }
+
+    /**
+     * @url https://binance-docs.github.io/apidocs/spot/en/#symbol-price-ticker
+     */
+    public static function getSymbolPriceTickerUrl(): string
+    {
+        return self::API_V3 . '/ticker/price';
+    }
 }
