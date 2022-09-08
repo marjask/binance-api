@@ -12,6 +12,7 @@ use Binance\DTO\Collection\CloseOrderDTOCollection;
 use Binance\DTO\Collection\CurrentOrderCountUsageDTOCollection;
 use Binance\DTO\Collection\AccountTradeDTOCollection;
 use Binance\DTO\Collection\OrderDTOCollection;
+use Binance\DTO\Collection\SymbolPriceDTOCollection;
 use Binance\DTO\Collection\TradeDTOCollection;
 use Binance\DTO\ExchangeInformation\ExchangeInformationDTOCollection;
 use Binance\DTO\ExchangeInformation\ExchangeInformationDTOCollectionFactory;
@@ -20,6 +21,7 @@ use Binance\DTO\Factory\CloseOrderDTOFactory;
 use Binance\DTO\Factory\CurrentOrderCountUsageDTOFactory;
 use Binance\DTO\Factory\AccountTradeDTOFactory;
 use Binance\DTO\Factory\OrderDTOFactory;
+use Binance\DTO\Factory\SymbolPriceDTOCollectionFactory;
 use Binance\DTO\Factory\TradeDTOFactory;
 use Binance\DTO\NewOrder\AbstractNewOrder;
 use Binance\DTO\NewOrder\Factory\NewOrderFactory;
@@ -27,6 +29,7 @@ use Binance\DTO\OrderDTO;
 use Binance\Query\AccountInformationQuery;
 use Binance\Query\AccountTradeListQuery;
 use Binance\Query\AllOrdersQuery;
+use Binance\Query\SymbolPriceTickerQuery;
 use Binance\Query\CurrentOpenOrdersQuery;
 use Binance\Query\CurrentOrderCountUsageQuery;
 use Binance\Query\ExchangeInformationQuery;
@@ -45,6 +48,7 @@ use Binance\Validator\OldTradeLookupQueryValidator;
 use Binance\Validator\NewOrderCommandValidator;
 use Binance\Validator\OrderQueryValidator;
 use Binance\Validator\RecentTradesListQueryValidator;
+use Binance\Validator\SymbolPriceTickerQueryValidator;
 use Binance\ValueObject\Integer as IntegerVO;
 use CurlClient\CurlClient;
 use Binance\Command\NewOrderCommand;
@@ -295,5 +299,22 @@ class Api
         );
 
         return CurrentOrderCountUsageDTOFactory::createCollectionFromArray($response->getData());
+    }
+
+    public function getSymbolPriceTicker(SymbolPriceTickerQuery $query): SymbolPriceDTOCollection
+    {
+        SymbolPriceTickerQueryValidator::create()->throwIfInvalid($query);
+
+        $response = $this->client->request(
+            (new Request())
+                ->setMethod(CurlClientConst::GET)
+                ->setPath(ApiRouter::getSymbolPriceTickerUrl())
+                ->setParams(
+                    $query->toArray()
+                )
+                ->setSignature(false)
+        );
+
+        return SymbolPriceDTOCollectionFactory::createCollectionFromArray($response->getData());
     }
 }
