@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Binance\DTO;
 
+use Trait\ToArray\ToArrayTrait;
+
 final class CurrentOrderCountUsageDTO
 {
+    use ToArrayTrait;
+
     public function __construct(
         private readonly string $rateLimitType,
         private readonly string $interval,

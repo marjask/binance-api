@@ -13,6 +13,7 @@ use Binance\Query\ExchangeInformationQuery;
 use Binance\Query\OldTradeLookupQuery;
 use Binance\Query\OrderQuery;
 use Binance\Query\RecentTradesListQuery;
+use Binance\ValueObject\BinanceApiAccountKey;
 use Binance\ValueObject\Id;
 use Binance\ValueObject\Integer;
 use Binance\ValueObject\OrderRespType;
@@ -31,13 +32,19 @@ use Marjask\ObjectValidator\Exception\InvalidValidationException;
 
 $api = new Api(
     (new ApiConfig())
-        ->setApiKey('test')
-        ->setApiSecret('test')
         ->setDebug(false)
         ->setTestnetEnable(true),
     new Logger(
         new FileSource('requestLogger.log')
 //        new EmptySource() // or if you don't want log requests set EmptySource
+    )
+);
+
+// set api key and secret key if endpoint use HMAC SHA256 signature.
+$api->setBinanceApiAccountKey(
+    new BinanceApiAccountKey(
+        'api_key',
+        'secret_key'
     )
 );
 

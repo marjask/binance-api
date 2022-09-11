@@ -8,8 +8,6 @@ final class ApiConfig
 {
     private bool $testnetEnable = false;
     private bool $debug = false;
-    private string $apiKey;
-    private string $apiSecret;
 
     public function isTestnetEnable(): bool
     {
@@ -42,36 +40,11 @@ final class ApiConfig
         return $this;
     }
 
-    public function getApiKey(): string
-    {
-        return $this->apiKey;
-    }
-
-    public function setApiKey(string $apiKey): ApiConfig
-    {
-        $this->apiKey = $apiKey;
-
-        return $this;
-    }
-
-    public function getApiSecret(): string
-    {
-        return $this->apiSecret;
-    }
-
-    public function setApiSecret(string $apiSecret): ApiConfig
-    {
-        $this->apiSecret = $apiSecret;
-        return $this;
-    }
-
     public function toArray(): array
     {
         return [
             'url' => $this->getApiUrl(),
             'debug' => $this->isDebug(),
-            'apiKey' => $this->getApiKey(),
-            'apiSecret' => $this->getApiSecret(),
         ];
     }
 }

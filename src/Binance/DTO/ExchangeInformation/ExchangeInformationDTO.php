@@ -6,9 +6,12 @@ namespace Binance\DTO\ExchangeInformation;
 
 use Binance\Collection\OrderTypeCollection;
 use Binance\DTO\ExchangeInformation\Filter\FilterCollection;
+use Trait\ToArray\ToArrayTrait;
 
 final class ExchangeInformationDTO
 {
+    use ToArrayTrait;
+
     public function __construct(
         private readonly string $symbol,
         private readonly string $status,

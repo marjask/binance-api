@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Binance\DTO;
 
 use Binance\DTO\Collection\BalancesDTOCollection;
+use Trait\ToArray\ToArrayTrait;
 
 final class AccountInformationDTO
 {
+    use ToArrayTrait;
+
     public function __construct(
         private readonly float $makerCommission,
         private readonly float $takerCommission,
