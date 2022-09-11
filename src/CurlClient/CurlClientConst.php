@@ -19,4 +19,5 @@ final class CurlClientConst
     ];
 
     public const HTTP_204 = 204;
+    public const EMPTY_RESPONSE = '';
 }

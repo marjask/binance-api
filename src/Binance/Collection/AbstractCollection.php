@@ -14,7 +14,7 @@ abstract class AbstractCollection implements Countable, IteratorAggregate
 {
     use ToArrayTrait;
 
-    protected array $collection;
+    protected array $collection = [];
     private string $collectionType;
 
     abstract protected function getCollectionType(): string;

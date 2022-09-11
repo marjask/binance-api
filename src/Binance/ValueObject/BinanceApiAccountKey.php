@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Binance\ValueObject;
 
-final class BinanceApiAccountDetails
+final class BinanceApiAccountKey
 {
     public function __construct(
-        protected string $apiKey,
-        protected string $secretKey
+        protected readonly string $apiKey,
+        protected readonly string $secretKey
     ) {
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CurlClient;
 
 use Binance\ApiConst;
+use Binance\ValueObject\BinanceApiAccountKey;
 use CurlClient\Exception\ResponseErrorException;
 use CurlClient\Query\Request;
 use CurlClient\RequestLogger\Command\CreateRequestLogCommand;
@@ -18,16 +19,22 @@ use RuntimeException;
 final class CurlClient
 {
     private string $url;
-    private bool $debug = false; // /< If you enable this, curl will output debugging information
-    private string $apiKey;
-    private string $apiSecret;
+    private bool $debug = false;
     private int $timeout;
     private Logger $logger;
+    private ?BinanceApiAccountKey $binanceApiAccountKey = null;
 
     public function __construct(array $config, Logger $logger)
     {
         $this->setConfig($config);
         $this->logger = $logger;
+    }
+
+    public function setBinanceApiAccountKey(BinanceApiAccountKey $binanceApiAccountKey): self
+    {
+        $this->binanceApiAccountKey = $binanceApiAccountKey;
+
+        return $this;
     }
 
     public function setConfig(array $config): void
@@ -36,31 +43,29 @@ final class CurlClient
             throw new RuntimeException('Empty url!');
         }
 
-        if (!array_key_exists('apiKey', $config)) {
-            throw new RuntimeException('Api Key not exists!');
-        }
-
-        if (!array_key_exists('apiSecret', $config)) {
-            throw new RuntimeException('Api Secret not exists!');
-        }
-
         $this->url = $config['url'];
         $this->debug = $config['debug'] ?? false;
-        $this->apiKey = $config['apiKey'];
-        $this->apiSecret = $config['apiSecret'];
         $this->timeout = $config['timeout'] ?? 60;
     }
 
     public function request(Request $request): Response
     {
+        if ($request->isSignature() && !$this->binanceApiAccountKey instanceof BinanceApiAccountKey) {
+            throw new RuntimeException('Signature required, BinanceApiAccountKey needed!');
+        }
+
         $startTime = microtime(true);
         $logCommand = new CreateRequestLogCommand();
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_VERBOSE, $this->debug);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'X-MBX-APIKEY: ' . $this->apiKey,
-        ));
+
+        if ($request->isSignature()) {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+                'X-MBX-APIKEY: ' . $this->binanceApiAccountKey->getApiKey(),
+            ));
+        }
+
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_HEADER, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -80,7 +85,9 @@ final class CurlClient
         $logCommand
             ->setQuery($query)
             ->setParameters($parameters);
-        $signature = hash_hmac(ApiConst::ALGORITHM, $query, $this->apiSecret);
+        $signature = $request->isSignature()
+            ? hash_hmac(ApiConst::ALGORITHM, $query, $this->binanceApiAccountKey->getSecretKey())
+            : null;
 
         if ($request->getMethod() === CurlClientConst::POST) {
             $endpoint = $this->url . $request->getPath();
@@ -108,7 +115,9 @@ final class CurlClient
                 ->setTimeout($this->timeout)
                 ->setMethod($request->getMethod())
                 ->setPath($request->getPath())
-                ->setResponse($output)
+                ->setResponse(
+                    curl_errno($curl) === 0 ? $output : CurlClientConst::EMPTY_RESPONSE
+                )
                 ->setDateTime(
                     new DateTime()
                 )

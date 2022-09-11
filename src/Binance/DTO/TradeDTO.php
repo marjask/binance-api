@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Binance\DTO;
 
+use Trait\ToArray\ToArrayTrait;
+
 class TradeDTO
 {
+    use ToArrayTrait;
+
     public function __construct(
         private readonly int $id,
         private readonly string $price,

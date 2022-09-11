@@ -49,6 +49,7 @@ use Binance\Validator\NewOrderCommandValidator;
 use Binance\Validator\OrderQueryValidator;
 use Binance\Validator\RecentTradesListQueryValidator;
 use Binance\Validator\SymbolPriceTickerQueryValidator;
+use Binance\ValueObject\BinanceApiAccountKey;
 use Binance\ValueObject\Integer as IntegerVO;
 use CurlClient\CurlClient;
 use Binance\Command\NewOrderCommand;
@@ -67,6 +68,13 @@ class Api
             $config->toArray(),
             $logger
         );
+    }
+
+    public function setBinanceApiAccountKey(BinanceApiAccountKey $binanceApiAccountKey): self
+    {
+        $this->client->setBinanceApiAccountKey($binanceApiAccountKey);
+
+        return $this;
     }
 
     public function newOrder(NewOrderCommand $cmd): AbstractNewOrder
