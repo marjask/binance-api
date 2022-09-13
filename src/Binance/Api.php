@@ -14,10 +14,12 @@ use Binance\DTO\Collection\AccountTradeDTOCollection;
 use Binance\DTO\Collection\OrderDTOCollection;
 use Binance\DTO\Collection\SymbolPriceDTOCollection;
 use Binance\DTO\Collection\TradeDTOCollection;
+use Binance\DTO\CurrentAveragePriceDTO;
 use Binance\DTO\ExchangeInformation\ExchangeInformationDTOCollection;
 use Binance\DTO\ExchangeInformation\ExchangeInformationDTOCollectionFactory;
 use Binance\DTO\Factory\AccountInformationDTOFactory;
 use Binance\DTO\Factory\CloseOrderDTOFactory;
+use Binance\DTO\Factory\CurrentAveragePriceDTOFactory;
 use Binance\DTO\Factory\CurrentOrderCountUsageDTOFactory;
 use Binance\DTO\Factory\AccountTradeDTOFactory;
 use Binance\DTO\Factory\OrderDTOFactory;
@@ -29,6 +31,7 @@ use Binance\DTO\OrderDTO;
 use Binance\Query\AccountInformationQuery;
 use Binance\Query\AccountTradeListQuery;
 use Binance\Query\AllOrdersQuery;
+use Binance\Query\CurrentAveragePriceQuery;
 use Binance\Query\SymbolPriceTickerQuery;
 use Binance\Query\CurrentOpenOrdersQuery;
 use Binance\Query\CurrentOrderCountUsageQuery;
@@ -41,6 +44,7 @@ use Binance\Validator\AccountTradeListQueryValidator;
 use Binance\Validator\AllOrdersQueryValidator;
 use Binance\Validator\CloseAllOpenOrdersCommandValidator;
 use Binance\Validator\CancelOrderCommandValidator;
+use Binance\Validator\CurrentAveragePriceQueryValidator;
 use Binance\Validator\CurrentOpenOrdersQueryValidator;
 use Binance\Validator\CurrentOrderCountUsageQueryValidator;
 use Binance\Validator\ExchangeInformationQueryValidator;
@@ -324,5 +328,22 @@ class Api
         );
 
         return SymbolPriceDTOCollectionFactory::createCollectionFromArray($response->getData());
+    }
+
+    public function getCurrentAveragePrice(CurrentAveragePriceQuery $query): CurrentAveragePriceDTO
+    {
+        CurrentAveragePriceQueryValidator::create()->throwIfInvalid($query);
+
+        $response = $this->client->request(
+            (new Request())
+                ->setMethod(CurlClientConst::GET)
+                ->setPath(ApiRouter::getCurrentAveragePriceUrl())
+                ->setParams(
+                    $query->toArray()
+                )
+                ->setSignature(false)
+        );
+
+        return CurrentAveragePriceDTOFactory::createFromArray($response->getData());
     }
 }

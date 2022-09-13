@@ -114,4 +114,12 @@ final class ApiRouter
     {
         return self::API_V3 . '/ticker/price';
     }
+
+    /**
+     * @url https://binance-docs.github.io/apidocs/spot/en/#current-average-price
+     */
+    public static function getCurrentAveragePriceUrl(): string
+    {
+        return self::API_V3 . '/avgPrice';
+    }
 }
