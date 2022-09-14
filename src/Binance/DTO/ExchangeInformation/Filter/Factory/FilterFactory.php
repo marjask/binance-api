@@ -11,7 +11,7 @@ use Binance\DTO\ExchangeInformation\Filter\LotSizeFilter;
 use Binance\DTO\ExchangeInformation\Filter\MarketLotSizeFilter;
 use Binance\DTO\ExchangeInformation\Filter\MaxNumAlgoOrdersFilter;
 use Binance\DTO\ExchangeInformation\Filter\MaxNumOrdersFilter;
-use Binance\DTO\ExchangeInformation\Filter\MinNationalFilter;
+use Binance\DTO\ExchangeInformation\Filter\MinNotionalFilter;
 use Binance\DTO\ExchangeInformation\Filter\PercentPriceFilter;
 use Binance\DTO\ExchangeInformation\Filter\PriceFilter;
 use Binance\DTO\ExchangeInformation\Filter\TrailingDeltaFilter;
@@ -37,7 +37,7 @@ final class FilterFactory
             'PRICE_FILTER' => self::createPriceFilterFromArray($data),
             'PERCENT_PRICE' => self::createPercentPriceFilterFromArray($data),
             'LOT_SIZE' => self::createLotSizeFilterFromArray($data),
-            'MIN_NOTIONAL' => self::createMinNationalFilterFromArray($data),
+            'MIN_NOTIONAL' => self::createMinNotionalFilterFromArray($data),
             'ICEBERG_PARTS' => self::createIcebergPartsFilterFromArray($data),
             'MARKET_LOT_SIZE' => self::createMarketLotSizeFilterFromArray($data),
             'TRAILING_DELTA' => self::createTrailingDeltaFilterFromArray($data),
@@ -77,9 +77,9 @@ final class FilterFactory
         );
     }
 
-    public static function createMinNationalFilterFromArray(array $data): MinNationalFilter
+    public static function createMinNotionalFilterFromArray(array $data): MinNotionalFilter
     {
-        return new MinNationalFilter(
+        return new MinNotionalFilter(
             $data['filterType'],
             $data['minNotional'],
             $data['applyToMarket'],
