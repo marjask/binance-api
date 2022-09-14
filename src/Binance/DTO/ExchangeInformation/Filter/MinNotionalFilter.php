@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Binance\DTO\ExchangeInformation\Filter;
 
-final class MinNationalFilter extends AbstractFilter
+final class MinNotionalFilter extends AbstractFilter
 {
     public function __construct(
         string $filterType,
