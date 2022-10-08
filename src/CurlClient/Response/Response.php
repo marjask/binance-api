@@ -10,7 +10,7 @@ class Response
 {
     public function __construct(
         protected Headers $headers,
-        protected array $data
+        protected ?array $data
     ) {
     }
 
@@ -19,7 +19,7 @@ class Response
         return $this->headers;
     }
 
-    public function getData(): array
+    public function getData(): ?array
     {
         return $this->data;
     }

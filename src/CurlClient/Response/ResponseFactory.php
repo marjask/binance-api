@@ -16,7 +16,7 @@ final class ResponseFactory
         );
     }
 
-    public static function createResponseError(array $headers, array $data): ResponseError
+    public static function createResponseError(array $headers, ?array $data): ResponseError
     {
         return new ResponseError(
             HeadersFactory::createFromArray($headers),

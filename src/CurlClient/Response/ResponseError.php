@@ -11,7 +11,7 @@ final class ResponseError extends Response
     protected ?int $errorCode;
     protected ?string $msg;
 
-    public function __construct(Headers $header, array $data)
+    public function __construct(Headers $header, ?array $data)
     {
         parent::__construct($header, $data);
 
