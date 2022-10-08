@@ -32,6 +32,10 @@ trait ToArrayTrait
 
             if ($value instanceof AbstractCollection && method_exists($value, 'toString')) {
                 $result[$name] = $value->toString();
+            } else if ($class->isSubclassOf(AbstractCollection::class)) {
+                $result = array_map(static function(mixed $item): array {
+                    return $item->toArray();
+                }, $value);
             } else if (is_object($value) && method_exists($value, 'toArray')) {
                 $result[$name] = $value->toArray();
             } elseif ($value instanceof AbstractValueObject && !is_null($value->getValue())) {
