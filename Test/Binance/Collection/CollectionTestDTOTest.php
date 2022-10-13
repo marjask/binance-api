@@ -13,7 +13,7 @@ final class CollectionTestDTOTest extends TestCase
     /**
      * @dataProvider \Test\Binance\Collection\ProviderData\CollectionTestDTOProviderData::oneElementProviderData
      */
-    public function testOneElement(TestDTO $dto): void
+    public function testOneElement(TestDTO $dto, array $expectedArray): void
     {
         $collection = new TestDTOCollection();
         $collection->add($dto);
@@ -26,17 +26,13 @@ final class CollectionTestDTOTest extends TestCase
         $this->assertFalse($collection->isEmpty());
         $this->assertIsArray($collection->toArray());
         $this->assertIsArray($collection->asArray());
-        $this->assertSame([
-            [
-                'test' => 'str',
-            ]
-        ], $collection->toArray());
+        $this->assertSame($expectedArray, $collection->toArray());
     }
 
     /**
      * @dataProvider \Test\Binance\Collection\ProviderData\CollectionTestDTOProviderData::twoElementsProviderData
      */
-    public function testTwoElements(TestDTO $dto1, TestDTO $dto2): void
+    public function testTwoElements(TestDTO $dto1, TestDTO $dto2, array $expectedArray): void
     {
         $collection = new TestDTOCollection();
         $collection->add($dto1);
@@ -50,20 +46,13 @@ final class CollectionTestDTOTest extends TestCase
         $this->assertFalse($collection->isEmpty());
         $this->assertIsArray($collection->toArray());
         $this->assertIsArray($collection->asArray());
-        $this->assertSame([
-            [
-                'test' => 'str',
-            ],
-            [
-                'test' => 'test',
-            ],
-        ], $collection->toArray());
+        $this->assertSame($expectedArray, $collection->toArray());
     }
 
     /**
      * @dataProvider \Test\Binance\Collection\ProviderData\CollectionTestDTOProviderData::twoElementsProviderData
      */
-    public function testMergeElements(TestDTO $dto1, TestDTO $dto2): void
+    public function testMergeElements(TestDTO $dto1, TestDTO $dto2, array $expectedArray): void
     {
         $collection1 = new TestDTOCollection();
         $collection2 = new TestDTOCollection();
@@ -80,20 +69,13 @@ final class CollectionTestDTOTest extends TestCase
         $this->assertFalse($collectionMerged->isEmpty());
         $this->assertIsArray($collectionMerged->toArray());
         $this->assertIsArray($collectionMerged->asArray());
-        $this->assertSame([
-            [
-                'test' => 'str',
-            ],
-            [
-                'test' => 'test',
-            ],
-        ], $collectionMerged->toArray());
+        $this->assertSame($expectedArray, $collectionMerged->toArray());
     }
 
     /**
      * @dataProvider \Test\Binance\Collection\ProviderData\CollectionTestDTOProviderData::twoElementsProviderData
      */
-    public function testFromArrayElements(TestDTO $dto1, TestDTO $dto2): void
+    public function testFromArrayElements(TestDTO $dto1, TestDTO $dto2, array $expectedArray): void
     {
         $collection = TestDTOCollection::fromArray([
             $dto1,
@@ -108,13 +90,6 @@ final class CollectionTestDTOTest extends TestCase
         $this->assertFalse($collection->isEmpty());
         $this->assertIsArray($collection->toArray());
         $this->assertIsArray($collection->asArray());
-        $this->assertSame([
-            [
-                'test' => 'str',
-            ],
-            [
-                'test' => 'test',
-            ],
-        ], $collection->toArray());
+        $this->assertSame($expectedArray, $collection->toArray());
     }
 }

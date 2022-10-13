@@ -13,7 +13,7 @@ final class CollectionTestVOTest extends TestCase
     /**
      * @dataProvider \Test\Binance\Collection\ProviderData\CollectionTestVOProviderData::oneElementProviderData
      */
-    public function testOneElement(TestVO $vo): void
+    public function testOneElement(TestVO $vo, array $expectedArray): void
     {
         $collection = new TestVOCollection();
         $collection->add($vo);
@@ -26,15 +26,13 @@ final class CollectionTestVOTest extends TestCase
         $this->assertFalse($collection->isEmpty());
         $this->assertIsArray($collection->toArray());
         $this->assertIsArray($collection->asArray());
-        $this->assertSame([
-            'str',
-        ], $collection->toArray());
+        $this->assertSame($expectedArray, $collection->toArray());
     }
 
     /**
      * @dataProvider \Test\Binance\Collection\ProviderData\CollectionTestVOProviderData::twoElementsProviderData
      */
-    public function testTwoElements(TestVO $vo1, TestVO $vo2): void
+    public function testTwoElements(TestVO $vo1, TestVO $vo2, array $expectedArray): void
     {
         $collection = new TestVOCollection();
         $collection->add($vo1);
@@ -48,16 +46,13 @@ final class CollectionTestVOTest extends TestCase
         $this->assertFalse($collection->isEmpty());
         $this->assertIsArray($collection->toArray());
         $this->assertIsArray($collection->asArray());
-        $this->assertSame([
-            'str',
-            'test',
-        ], $collection->toArray());
+        $this->assertSame($expectedArray, $collection->toArray());
     }
 
     /**
      * @dataProvider \Test\Binance\Collection\ProviderData\CollectionTestVOProviderData::twoElementsProviderData
      */
-    public function testMergeElements(TestVO $vo1, TestVO $vo2): void
+    public function testMergeElements(TestVO $vo1, TestVO $vo2, array $expectedArray): void
     {
         $collection1 = new TestVOCollection();
         $collection2 = new TestVOCollection();
@@ -74,16 +69,13 @@ final class CollectionTestVOTest extends TestCase
         $this->assertFalse($collectionMerged->isEmpty());
         $this->assertIsArray($collectionMerged->toArray());
         $this->assertIsArray($collectionMerged->asArray());
-        $this->assertSame([
-            'str',
-            'test',
-        ], $collectionMerged->toArray());
+        $this->assertSame($expectedArray, $collectionMerged->toArray());
     }
 
     /**
      * @dataProvider \Test\Binance\Collection\ProviderData\CollectionTestVOProviderData::twoElementsProviderData
      */
-    public function testFromArrayElements(TestVO $dto1, TestVO $dto2): void
+    public function testFromArrayElements(TestVO $dto1, TestVO $dto2, array $expectedArray): void
     {
         $collection = TestVOCollection::fromArray([
             $dto1,
@@ -98,9 +90,6 @@ final class CollectionTestVOTest extends TestCase
         $this->assertFalse($collection->isEmpty());
         $this->assertIsArray($collection->toArray());
         $this->assertIsArray($collection->asArray());
-        $this->assertSame([
-            'str',
-            'test',
-        ], $collection->toArray());
+        $this->assertSame($expectedArray, $collection->toArray());
     }
 }

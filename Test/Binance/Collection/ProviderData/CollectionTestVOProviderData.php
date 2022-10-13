@@ -11,7 +11,10 @@ final class CollectionTestVOProviderData
     public static function oneElementProviderData(): Generator
     {
         yield [
-            'element' => new TestVO('str')
+            'element' => new TestVO('str'),
+            'expectedArray' => [
+                'str',
+            ],
         ];
     }
 
@@ -20,6 +23,10 @@ final class CollectionTestVOProviderData
         yield [
             'element1' => new TestVO('str'),
             'element2' => new TestVO('test'),
+            'expectedArray' => [
+                'str',
+                'test',
+            ],
         ];
     }
 }

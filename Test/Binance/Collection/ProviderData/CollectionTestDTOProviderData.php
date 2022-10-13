@@ -11,7 +11,12 @@ final class CollectionTestDTOProviderData
     public static function oneElementProviderData(): Generator
     {
         yield [
-            'element' => new TestDTO('str')
+            'element' => new TestDTO('str'),
+            'expectedArray' => [
+                [
+                    'test' => 'str',
+                ]
+            ],
         ];
     }
 
@@ -20,6 +25,14 @@ final class CollectionTestDTOProviderData
         yield [
             'element1' => new TestDTO('str'),
             'element2' => new TestDTO('test'),
+            'expectedArray' =>[
+                [
+                    'test' => 'str',
+                ],
+                [
+                    'test' => 'test',
+                ],
+            ],
         ];
     }
 }
