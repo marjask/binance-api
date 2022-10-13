@@ -13,6 +13,11 @@ final class MaxNumAlgoOrdersFilter extends AbstractFilter
         parent::__construct($filterType);
     }
 
+    protected function getClassFilterType(): string
+    {
+        return FilterConst::MAX_NUM_ALGO_ORDERS;
+    }
+
     public function getMaxNumAlgoOrders(): int
     {
         return $this->maxNumAlgoOrders;

@@ -6,6 +6,7 @@ namespace Binance\DTO\ExchangeInformation\Filter\Factory;
 
 use Binance\DTO\ExchangeInformation\Filter\AbstractFilter;
 use Binance\DTO\ExchangeInformation\Filter\FilterCollection;
+use Binance\DTO\ExchangeInformation\Filter\FilterConst;
 use Binance\DTO\ExchangeInformation\Filter\IcebergPartsFilter;
 use Binance\DTO\ExchangeInformation\Filter\LotSizeFilter;
 use Binance\DTO\ExchangeInformation\Filter\MarketLotSizeFilter;
@@ -34,15 +35,15 @@ final class FilterFactory
         }
 
         return match ($data['filterType']) {
-            'PRICE_FILTER' => self::createPriceFilterFromArray($data),
-            'PERCENT_PRICE' => self::createPercentPriceFilterFromArray($data),
-            'LOT_SIZE' => self::createLotSizeFilterFromArray($data),
-            'MIN_NOTIONAL' => self::createMinNotionalFilterFromArray($data),
-            'ICEBERG_PARTS' => self::createIcebergPartsFilterFromArray($data),
-            'MARKET_LOT_SIZE' => self::createMarketLotSizeFilterFromArray($data),
-            'TRAILING_DELTA' => self::createTrailingDeltaFilterFromArray($data),
-            'MAX_NUM_ORDERS' => self::createMaxNumOrdersFilterFromArray($data),
-            'MAX_NUM_ALGO_ORDERS' => self::createMaxNumAlgoOrdersFilterFromArray($data),
+            FilterConst::PRICE_FILTER => self::createPriceFilterFromArray($data),
+            FilterConst::PERCENT_PRICE => self::createPercentPriceFilterFromArray($data),
+            FilterConst::LOT_SIZE => self::createLotSizeFilterFromArray($data),
+            FilterConst::MIN_NOTIONAL => self::createMinNotionalFilterFromArray($data),
+            FilterConst::ICEBERG_PARTS => self::createIcebergPartsFilterFromArray($data),
+            FilterConst::MARKET_LOT_SIZE => self::createMarketLotSizeFilterFromArray($data),
+            FilterConst::TRAILING_DELTA => self::createTrailingDeltaFilterFromArray($data),
+            FilterConst::MAX_NUM_ORDERS => self::createMaxNumOrdersFilterFromArray($data),
+            FilterConst::MAX_NUM_ALGO_ORDERS => self::createMaxNumAlgoOrdersFilterFromArray($data),
             default => throw new UnexpectedValueException('Unexpected filterType.'),
         };
     }

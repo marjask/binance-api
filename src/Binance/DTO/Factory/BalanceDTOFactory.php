@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Binance\DTO\Factory;
 
-use Binance\DTO\BalancesDTO;
+use Binance\DTO\BalanceDTO;
 use Binance\DTO\Collection\BalancesDTOCollection;
 
-final class BalancesDTOFactory
+final class BalanceDTOFactory
 {
-    public static function createFromArray(array $data): BalancesDTO
+    public static function createFromArray(array $data): BalanceDTO
     {
-        return new BalancesDTO(
+        return new BalanceDTO(
             $data['asset'],
             $data['free'],
             $data['locked']
@@ -21,7 +21,7 @@ final class BalancesDTOFactory
     public static function createCollectionFromArray(array $data): BalancesDTOCollection
     {
         return BalancesDTOCollection::fromArray(
-            array_map(static fn (array $item): BalancesDTO => self::createFromArray($item), $data)
+            array_map(static fn (array $item): BalanceDTO => self::createFromArray($item), $data)
         );
     }
 }

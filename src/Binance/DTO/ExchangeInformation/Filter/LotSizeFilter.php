@@ -8,11 +8,16 @@ class LotSizeFilter extends AbstractFilter
 {
     public function __construct(
         string $filterType,
-        private readonly string $minQty,
-        private readonly string $maxQty,
-        private readonly string $stepSize
+        protected readonly string $minQty,
+        protected readonly string $maxQty,
+        protected readonly string $stepSize
     ) {
         parent::__construct($filterType);
+    }
+
+    protected function getClassFilterType(): string
+    {
+        return FilterConst::LOT_SIZE;
     }
 
     public function getMinQty(): string

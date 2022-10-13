@@ -6,7 +6,7 @@ namespace Binance\DTO;
 
 use Trait\ToArray\ToArrayTrait;
 
-final class BalancesDTO
+final class BalanceDTO
 {
     use ToArrayTrait;
 

@@ -15,6 +15,11 @@ final class PriceFilter extends AbstractFilter
         parent::__construct($filterType);
     }
 
+    protected function getClassFilterType(): string
+    {
+        return FilterConst::PRICE_FILTER;
+    }
+
     public function getMinPrice(): string
     {
         return $this->minPrice;
