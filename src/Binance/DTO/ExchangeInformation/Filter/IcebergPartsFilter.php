@@ -13,6 +13,11 @@ final class IcebergPartsFilter extends AbstractFilter
         parent::__construct($filterType);
     }
 
+    protected function getClassFilterType(): string
+    {
+        return FilterConst::ICEBERG_PARTS;
+    }
+
     public function getLimit(): int
     {
         return $this->limit;

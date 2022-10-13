@@ -16,6 +16,11 @@ final class TrailingDeltaFilter extends AbstractFilter
         parent::__construct($filterType);
     }
 
+    protected function getClassFilterType(): string
+    {
+        return FilterConst::TRAILING_DELTA;
+    }
+
     public function getMinTrailingAboveDelta(): int
     {
         return $this->minTrailingAboveDelta;

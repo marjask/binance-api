@@ -15,6 +15,11 @@ final class PercentPriceFilter extends AbstractFilter
         parent::__construct($filterType);
     }
 
+    protected function getClassFilterType(): string
+    {
+        return FilterConst::PERCENT_PRICE;
+    }
+
     public function getMultiplierUp(): string
     {
         return $this->multiplierUp;

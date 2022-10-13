@@ -14,10 +14,27 @@ trait ToArrayTrait
     {
         $result = [];
 
-        $class = new ReflectionClass(static::class);
+        if ($this instanceof AbstractCollection) {
+            /**
+             * @var string $property
+             * @var AbstractValueObject|object|string|int|bool|float|null $value
+             */
+            foreach ($this as $property => $value) {
+                if (is_object($value) && method_exists($value, 'toArray')) {
+                    $result[$property] = $value->toArray();
+                } elseif ($value instanceof AbstractValueObject && !is_null($value->getValue())) {
+                    $result[$property] = $value->getValue();
+                } elseif (!is_null($value)) {
+                    $result[$property] = $value;
+                }
+            }
+
+            return $result;
+        }
+
+        $class = new ReflectionClass($this);
         $properties = $class->getProperties();
 
-        /** @var ReflectionProperty $property */
         foreach ($properties as $property) {
             if ($this->isIgnore($property)) {
                 continue;
@@ -32,15 +49,13 @@ trait ToArrayTrait
 
             if ($value instanceof AbstractCollection && method_exists($value, 'toString')) {
                 $result[$name] = $value->toString();
-            } else if ($class->isSubclassOf(AbstractCollection::class)) {
-                $result = array_map(static function(mixed $item): array {
-                    return $item->toArray();
-                }, $value);
-            } else if (is_object($value) && method_exists($value, 'toArray')) {
+            } elseif ($value instanceof AbstractCollection) {
+                $result[$name] = $value->toArray();
+            } elseif (is_object($value) && method_exists($value, 'toArray')) {
                 $result[$name] = $value->toArray();
             } elseif ($value instanceof AbstractValueObject && !is_null($value->getValue())) {
                 $result[$name] = $value->getValue();
-            } else if (!is_null($value)) {
+            } elseif (!is_null($value)) {
                 $result[$name] = $value;
             }
         }

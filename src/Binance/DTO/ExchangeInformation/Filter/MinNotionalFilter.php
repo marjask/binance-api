@@ -15,6 +15,11 @@ final class MinNotionalFilter extends AbstractFilter
         parent::__construct($filterType);
     }
 
+    protected function getClassFilterType(): string
+    {
+        return FilterConst::MIN_NOTIONAL;
+    }
+
     public function getMinNotional(): string
     {
         return $this->minNotional;

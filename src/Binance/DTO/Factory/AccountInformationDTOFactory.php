@@ -21,7 +21,7 @@ final class AccountInformationDTOFactory
             $data['brokered'],
             $data['updateTime'],
             $data['accountType'],
-            BalancesDTOFactory::createCollectionFromArray($data['balances']),
+            BalanceDTOFactory::createCollectionFromArray($data['balances']),
             $data['permissions'],
         );
     }
