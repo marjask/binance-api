@@ -85,16 +85,27 @@ class Api
     {
         NewOrderCommandValidator::create()->throwIfInvalid($cmd);
 
-        $response = $this->client->request(
-            (new Request())
-                ->setMethod(CurlClientConst::POST)
-                ->setPath(
-                    ApiRouter::getOrderUrl($cmd->getTest()->toBoolean())
-                )
-                ->setParams(
-                    $cmd->toArray()
-                )
-        );
+        try {
+            $response = $this->client->request(
+                (new Request())
+                    ->setMethod(CurlClientConst::POST)
+                    ->setPath(
+                        ApiRouter::getOrderUrl($cmd->getTest()->toBoolean())
+                    )
+                    ->setParams(
+                        $cmd->toArray()
+                    )
+            );
+        } catch (ResponseErrorException $exception) {
+            if ($cmd->getTest()->toBoolean() === true) {
+                return NewOrderFactory::getFactoryByNewOrderCommand($cmd)
+                    ->createFromArray(
+                        $exception->getErrorResponse()->getData()
+                    );
+            }
+
+            throw $exception;
+        }
 
         return NewOrderFactory::getFactoryByNewOrderCommand($cmd)
             ->createFromArray($response->getData());

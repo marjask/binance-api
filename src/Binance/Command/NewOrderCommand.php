@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Binance\Command;
 
-use Binance\ValueObject\Boolean;
+use Binance\ValueObject\Boolean as BooleanVO;
 use Binance\ValueObject\Id;
 use Binance\ValueObject\Integer;
 use Binance\ValueObject\OrderRespType;
@@ -22,7 +22,7 @@ class NewOrderCommand extends AbstractOrderCommand
     protected OrderType $type;
     protected ?Real $quantity;
     #[ToArrayIgnore]
-    protected ?Boolean $test;
+    protected BooleanVO $test;
     protected ?TimeInForce $timeInForce;
     protected ?Real $quoteOrderQty;
     protected ?Price $price;
@@ -37,7 +37,7 @@ class NewOrderCommand extends AbstractOrderCommand
     {
         parent::__construct();
 
-        $this->setTest(new Boolean(false));
+        $this->setTest(new BooleanVO(false));
         $this->quantity = null;
         $this->timeInForce = null;
         $this->quoteOrderQty = null;
@@ -98,12 +98,12 @@ class NewOrderCommand extends AbstractOrderCommand
         return $this;
     }
 
-    final public function getTest(): ?Boolean
+    final public function getTest(): BooleanVO
     {
         return $this->test;
     }
 
-    final public function setTest(?Boolean $test): self
+    final public function setTest(BooleanVO $test): self
     {
         $this->test = $test;
 

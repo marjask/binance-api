@@ -9,7 +9,7 @@ use Binance\ValueObject\Symbol;
 
 class CurrentOpenOrdersQuery extends GeneralOrderQuery
 {
-    protected Symbol $symbol;
+    protected ?Symbol $symbol;
     protected ?RecvWindow $recvWindow;
 
     public function __construct()
@@ -17,14 +17,15 @@ class CurrentOpenOrdersQuery extends GeneralOrderQuery
         parent::__construct();
 
         $this->recvWindow = null;
+        $this->symbol = null;
     }
 
-    public function getSymbol(): Symbol
+    public function getSymbol(): ?Symbol
     {
         return $this->symbol;
     }
 
-    public function setSymbol(Symbol $symbol): self
+    public function setSymbol(?Symbol $symbol): self
     {
         $this->symbol = $symbol;
 
