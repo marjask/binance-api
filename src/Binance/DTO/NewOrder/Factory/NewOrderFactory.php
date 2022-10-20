@@ -14,6 +14,10 @@ final class NewOrderFactory
     {
         $orderResponseType = $cmd->getNewOrderRespType();
 
+        if ($cmd->getTest()->toBoolean() === true) {
+            return new NewOrderTestDTOFactory();
+        }
+
         if ($orderResponseType instanceof OrderRespType) {
             return match ($orderResponseType->getValue()) {
                 OrderRespType::ORDER_RESP_TYPE_RESULT => new NewOrderResultDTOFactory(),
