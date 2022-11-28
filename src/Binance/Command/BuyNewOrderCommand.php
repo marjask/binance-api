@@ -13,7 +13,7 @@ final class BuyNewOrderCommand extends NewOrderCommand
     {
         parent::__construct();
 
-        $this->setSide(new OrderSide(OrderSide::ORDER_SIDE_BUY));
-        $this->setType(new OrderType(OrderType::ORDER_TYPE_MARKET));
+        $this->setSide(new OrderSide(OrderSide::BUY));
+        $this->setType(new OrderType(OrderType::MARKET));
     }
 }

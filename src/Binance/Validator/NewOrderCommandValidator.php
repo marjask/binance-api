@@ -38,47 +38,47 @@ class NewOrderCommandValidator extends AbstractOrderCommandValidator
             ),
             new AlsoRequiredIfValueIs(
                 new OptionAlsoRequiredIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_LIMIT, fields: ['timeInForce', 'quantity', 'price']
+                    expectedValue: OrderType::LIMIT, fields: ['timeInForce', 'quantity', 'price']
                 )
             ),
             new AlsoRequiredOneOfIfValueIs(
                 new OptionAlsoRequiredOneOfIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_MARKET, fields: ['quantity', 'quoteOrderQty']
+                    expectedValue: OrderType::MARKET, fields: ['quantity', 'quoteOrderQty']
                 )
             ),
             new AlsoRequiredIfValueIs(
                 new OptionAlsoRequiredIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_STOP_LOSS, fields: ['quantity']
+                    expectedValue: OrderType::STOP_LOSS, fields: ['quantity']
                 )
             ),
             new AlsoRequiredOneOfIfValueIs(
                 new OptionAlsoRequiredOneOfIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_STOP_LOSS, fields: ['stopPrice', 'trailingDelta']
+                    expectedValue: OrderType::STOP_LOSS, fields: ['stopPrice', 'trailingDelta']
                 )
             ),
             new AlsoRequiredIfValueIs(
                 new OptionAlsoRequiredIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_STOP_LOSS_LIMIT, fields: ['timeInForce', 'quantity', 'price']
+                    expectedValue: OrderType::STOP_LOSS_LIMIT, fields: ['timeInForce', 'quantity', 'price']
                 )
             ),
             new AlsoRequiredOneOfIfValueIs(
                 new OptionAlsoRequiredOneOfIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_STOP_LOSS_LIMIT, fields: ['stopPrice', 'trailingDelta']
+                    expectedValue: OrderType::STOP_LOSS_LIMIT, fields: ['stopPrice', 'trailingDelta']
                 )
             ),
             new AlsoRequiredIfValueIs(
                 new OptionAlsoRequiredIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_TAKE_PROFIT, fields: ['quantity']
+                    expectedValue: OrderType::TAKE_PROFIT, fields: ['quantity']
                 )
             ),
             new AlsoRequiredOneOfIfValueIs(
                 new OptionAlsoRequiredOneOfIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_TAKE_PROFIT_LIMIT, fields: ['stopPrice', 'trailingDelta']
+                    expectedValue: OrderType::TAKE_PROFIT_LIMIT, fields: ['stopPrice', 'trailingDelta']
                 )
             ),
             new AlsoRequiredIfValueIs(
                 new OptionAlsoRequiredIfValueIs(
-                    expectedValue: OrderType::ORDER_TYPE_LIMIT_MARKET, fields: ['quantity', 'price']
+                    expectedValue: OrderType::LIMIT_MAKER, fields: ['quantity', 'price']
                 )
             )
         )->addConstraint('side',
@@ -110,10 +110,10 @@ class NewOrderCommandValidator extends AbstractOrderCommandValidator
             ),
             new InArray(
                 new OptionInArray('type', [
-                    OrderType::ORDER_TYPE_STOP_LOSS,
-                    OrderType::ORDER_TYPE_TAKE_PROFIT,
-                    OrderType::ORDER_TYPE_TAKE_PROFIT_LIMIT,
-                    OrderType::ORDER_TYPE_STOP_LOSS_LIMIT,
+                    OrderType::STOP_LOSS,
+                    OrderType::TAKE_PROFIT,
+                    OrderType::TAKE_PROFIT_LIMIT,
+                    OrderType::STOP_LOSS_LIMIT,
                 ])
             )
         )->addConstraint('trailingDelta',
@@ -125,10 +125,10 @@ class NewOrderCommandValidator extends AbstractOrderCommandValidator
             ),
             new InArray(
                 new OptionInArray('type', [
-                    OrderType::ORDER_TYPE_STOP_LOSS,
-                    OrderType::ORDER_TYPE_TAKE_PROFIT,
-                    OrderType::ORDER_TYPE_TAKE_PROFIT_LIMIT,
-                    OrderType::ORDER_TYPE_STOP_LOSS_LIMIT,
+                    OrderType::STOP_LOSS,
+                    OrderType::TAKE_PROFIT,
+                    OrderType::TAKE_PROFIT_LIMIT,
+                    OrderType::STOP_LOSS_LIMIT,
                 ])
             )
         )->addConstraint('icebergQty',
@@ -140,9 +140,9 @@ class NewOrderCommandValidator extends AbstractOrderCommandValidator
             ),
             new InArray(
                 new OptionInArray('type', [
-                    OrderType::ORDER_TYPE_LIMIT,
-                    OrderType::ORDER_TYPE_STOP_LOSS_LIMIT,
-                    OrderType::ORDER_TYPE_TAKE_PROFIT_LIMIT,
+                    OrderType::LIMIT,
+                    OrderType::STOP_LOSS_LIMIT,
+                    OrderType::TAKE_PROFIT_LIMIT,
                 ])
             )
         )->addConstraint('newOrderRespType',

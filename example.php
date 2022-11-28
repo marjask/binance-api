@@ -30,15 +30,23 @@ use CurlClient\RequestLogger\Logger;
 use CurlClient\RequestLogger\Source\FileSource;
 use Marjask\ObjectValidator\Exception\InvalidValidationException;
 
+// default request don't saved
 $api = new Api(
     (new ApiConfig())
         ->setDebug(false)
-        ->setTestnetEnable(true),
+        ->setTestnetEnable(true)
+);
+
+// if you are going to save the request set logger, ex:
+// save request log to file, REMEMBER: logger save only one request
+$api->setLogger(
     new Logger(
         new FileSource('requestLogger.log')
-//        new EmptySource() // or if you don't want log requests set EmptySource
     )
 );
+
+// won't save request log
+$api->resetLogger();
 
 // set api key and secret key if endpoint use HMAC SHA256 signature.
 $api->setBinanceApiAccountKey(
@@ -57,6 +65,8 @@ try {
         (new ExchangeInformationQuery())
             ->setSymbol(Symbol::fromString('ETHUSDT'))
     );
+
+    $lastRequestLogCommand = $api->getLastRequestLogCommand();
 
     $accountInformationDTO = $api->getAccountInformation(
         (new AccountInformationQuery())
@@ -88,13 +98,13 @@ try {
 
     $newOrderFullDTO = $api->newOrder(
         (new NewOrderCommand())
-            ->setSide(new OrderSide(OrderSide::ORDER_SIDE_BUY))
-            ->setType(new OrderType(OrderType::ORDER_TYPE_LIMIT))
+            ->setSide(new OrderSide(OrderSide::BUY))
+            ->setType(new OrderType(OrderType::LIMIT))
             ->setQuantity(new Real(0.1))
             ->setSymbol(new Symbol('ETHUSDT'))
             ->setPrice(new Price('500'))
-            ->setTimeInForce(new TimeInForce(TimeInForce::TIME_IN_FORCE_GTC))
-            ->setNewOrderRespType(new OrderRespType(OrderRespType::ORDER_RESP_TYPE_RESULT))
+            ->setTimeInForce(new TimeInForce(TimeInForce::GTC))
+            ->setNewOrderRespType(new OrderRespType(OrderRespType::RESULT))
     );
 
     $orderDTOCollection = $api->getCurrentOpenOrders(

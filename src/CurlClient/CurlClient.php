@@ -21,13 +21,32 @@ final class CurlClient
     private string $url;
     private bool $debug = false;
     private int $timeout;
-    private Logger $logger;
+    private ?Logger $logger = null;
     private ?BinanceApiAccountKey $binanceApiAccountKey = null;
+    private ?CreateRequestLogCommand $lastRequestLogCommand = null;
 
-    public function __construct(array $config, Logger $logger)
+    public function __construct(array $config)
     {
         $this->setConfig($config);
+    }
+
+    public function setLogger(?Logger $logger): self
+    {
         $this->logger = $logger;
+
+        return $this;
+    }
+
+    public function resetLogger(): self
+    {
+        $this->setLogger(null);
+
+        return $this;
+    }
+
+    public function getLastRequestLogCommand(): ?CreateRequestLogCommand
+    {
+        return $this->lastRequestLogCommand;
     }
 
     public function setBinanceApiAccountKey(BinanceApiAccountKey $binanceApiAccountKey): self
@@ -55,7 +74,7 @@ final class CurlClient
         }
 
         $startTime = microtime(true);
-        $logCommand = new CreateRequestLogCommand();
+        $this->lastRequestLogCommand = new CreateRequestLogCommand();
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_VERBOSE, $this->debug);
@@ -82,7 +101,7 @@ final class CurlClient
 
         $parameters = $request->getParams();
         $query = Helper::getPreparedQueryUrl($parameters);
-        $logCommand
+        $this->lastRequestLogCommand
             ->setQuery($query)
             ->setParameters($parameters);
         $signature = $request->isSignature()
@@ -109,26 +128,33 @@ final class CurlClient
         $output = curl_exec($curl);
         $responseCode = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
 
-        $this->logger->logRequest(
-            $logCommand
-                ->setDebug($this->debug)
-                ->setTimeout($this->timeout)
-                ->setMethod($request->getMethod())
-                ->setPath($request->getPath())
-                ->setResponse(
-                    curl_errno($curl) === 0 ? $output : CurlClientConst::EMPTY_RESPONSE
-                )
-                ->setDateTime(
-                    new DateTime()
-                )
-                ->setError(
-                    curl_errno($curl) > 0 ? curl_error($curl) : null
-                )
-                ->setResponseCode($responseCode)
-                ->setRequestTime(
-                    $this->getRequestTime($startTime)
-                )
-        );
+        $this->lastRequestLogCommand
+            ->setDebug($this->debug)
+            ->setTimeout($this->timeout)
+            ->setMethod($request->getMethod())
+            ->setPath($request->getPath())
+            ->setResponse(
+                curl_errno($curl) === 0 ? $output : CurlClientConst::EMPTY_RESPONSE
+            )
+            ->setDateTime(
+                new DateTime()
+            )
+            ->setError(
+                curl_errno($curl) > 0 ? curl_error($curl) : null
+            )
+            ->setResponseCode($responseCode)
+            ->setRequestTime(
+                $this->getRequestTime($startTime)
+            );
+
+        if ($this->logger instanceof Logger) {
+            $this->logger->logRequest(
+                $this->lastRequestLogCommand
+            );
+
+            // always reset logger after request
+            $this->resetLogger();
+        }
 
         if (curl_errno($curl) > 0) {
             throw new RuntimeException('Curl error: ' . curl_error($curl));
