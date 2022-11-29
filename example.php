@@ -26,18 +26,13 @@ use Binance\ValueObject\Symbol;
 use Binance\ValueObject\TimeInForce;
 use Binance\ValueObject\Timestamp;
 use CurlClient\Exception\ResponseErrorException;
-use CurlClient\RequestLogger\Logger;
-use CurlClient\RequestLogger\Source\FileSource;
 use Marjask\ObjectValidator\Exception\InvalidValidationException;
 
+// default request don't saved
 $api = new Api(
     (new ApiConfig())
         ->setDebug(false)
-        ->setTestnetEnable(true),
-    new Logger(
-        new FileSource('requestLogger.log')
-//        new EmptySource() // or if you don't want log requests set EmptySource
-    )
+        ->setTestnetEnable(true)
 );
 
 // set api key and secret key if endpoint use HMAC SHA256 signature.
@@ -49,14 +44,17 @@ $api->setBinanceApiAccountKey(
 );
 
 try {
-    $bool = $api->ping();
+    $isPong = $api->ping();
 
-    $integer = $api->getCheckServerTime();
+    $serverTime = $api->getCheckServerTime();
 
     $exchangeInformationDTOCollection = $api->getExchangeInformation(
         (new ExchangeInformationQuery())
             ->setSymbol(Symbol::fromString('ETHUSDT'))
     );
+
+    // show information last request details information with response data
+    $lastRequestLogCommand = $api->getLastRequestDetails();
 
     $accountInformationDTO = $api->getAccountInformation(
         (new AccountInformationQuery())
@@ -88,13 +86,13 @@ try {
 
     $newOrderFullDTO = $api->newOrder(
         (new NewOrderCommand())
-            ->setSide(new OrderSide(OrderSide::ORDER_SIDE_BUY))
-            ->setType(new OrderType(OrderType::ORDER_TYPE_LIMIT))
+            ->setSide(new OrderSide(OrderSide::BUY))
+            ->setType(new OrderType(OrderType::LIMIT))
             ->setQuantity(new Real(0.1))
             ->setSymbol(new Symbol('ETHUSDT'))
             ->setPrice(new Price('500'))
-            ->setTimeInForce(new TimeInForce(TimeInForce::TIME_IN_FORCE_GTC))
-            ->setNewOrderRespType(new OrderRespType(OrderRespType::ORDER_RESP_TYPE_RESULT))
+            ->setTimeInForce(new TimeInForce(TimeInForce::GTC))
+            ->setNewOrderRespType(new OrderRespType(OrderRespType::RESULT))
     );
 
     $orderDTOCollection = $api->getCurrentOpenOrders(

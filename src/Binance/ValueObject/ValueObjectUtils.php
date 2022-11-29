@@ -6,7 +6,7 @@ namespace Binance\ValueObject;
 
 final class ValueObjectUtils
 {
-    public static function getOrDefault(?AbstractValueObject $vo, mixed $default = null)
+    public static function getOrDefault(?AbstractValueObject $vo, mixed $default = null): mixed
     {
         return $vo instanceof AbstractValueObject ? $vo->getValue() : $default;
     }

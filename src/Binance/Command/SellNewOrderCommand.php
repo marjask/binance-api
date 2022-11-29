@@ -14,7 +14,7 @@ final class SellNewOrderCommand extends NewOrderCommand
     {
         parent::__construct();
 
-        $this->setSide(new OrderSide(OrderSide::ORDER_SIDE_SELL));
-        $this->setType(new OrderType(OrderType::ORDER_TYPE_MARKET));
+        $this->setSide(new OrderSide(OrderSide::SELL));
+        $this->setType(new OrderType(OrderType::MARKET));
     }
 }

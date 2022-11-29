@@ -8,8 +8,7 @@ use Binance\ApiConst;
 use Binance\ValueObject\BinanceApiAccountKey;
 use CurlClient\Exception\ResponseErrorException;
 use CurlClient\Query\Request;
-use CurlClient\RequestLogger\Command\CreateRequestLogCommand;
-use CurlClient\RequestLogger\Logger;
+use CurlClient\Request\RequestDetails;
 use CurlClient\Response\Response;
 use CurlClient\Response\ResponseFactory;
 use CurlClient\Utils\Helper;
@@ -21,13 +20,17 @@ final class CurlClient
     private string $url;
     private bool $debug = false;
     private int $timeout;
-    private Logger $logger;
     private ?BinanceApiAccountKey $binanceApiAccountKey = null;
+    private ?RequestDetails $lastRequestDetails = null;
 
-    public function __construct(array $config, Logger $logger)
+    public function __construct(array $config)
     {
         $this->setConfig($config);
-        $this->logger = $logger;
+    }
+
+    public function getLastRequestDetails(): ?RequestDetails
+    {
+        return $this->lastRequestDetails;
     }
 
     public function setBinanceApiAccountKey(BinanceApiAccountKey $binanceApiAccountKey): self
@@ -51,11 +54,11 @@ final class CurlClient
     public function request(Request $request): Response
     {
         if ($request->isSignature() && !$this->binanceApiAccountKey instanceof BinanceApiAccountKey) {
-            throw new RuntimeException('Signature required, BinanceApiAccountKey needed!');
+            throw new RuntimeException('Signature required, configuration Binance Api needed!');
         }
 
         $startTime = microtime(true);
-        $logCommand = new CreateRequestLogCommand();
+        $this->lastRequestDetails = new RequestDetails();
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_VERBOSE, $this->debug);
@@ -82,7 +85,7 @@ final class CurlClient
 
         $parameters = $request->getParams();
         $query = Helper::getPreparedQueryUrl($parameters);
-        $logCommand
+        $this->lastRequestDetails
             ->setQuery($query)
             ->setParameters($parameters);
         $signature = $request->isSignature()
@@ -109,26 +112,19 @@ final class CurlClient
         $output = curl_exec($curl);
         $responseCode = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
 
-        $this->logger->logRequest(
-            $logCommand
-                ->setDebug($this->debug)
-                ->setTimeout($this->timeout)
-                ->setMethod($request->getMethod())
-                ->setPath($request->getPath())
-                ->setResponse(
-                    curl_errno($curl) === 0 ? $output : CurlClientConst::EMPTY_RESPONSE
-                )
-                ->setDateTime(
-                    new DateTime()
-                )
-                ->setError(
-                    curl_errno($curl) > 0 ? curl_error($curl) : null
-                )
-                ->setResponseCode($responseCode)
-                ->setRequestTime(
-                    $this->getRequestTime($startTime)
-                )
-        );
+        $this->lastRequestDetails
+            ->setDebug($this->debug)
+            ->setTimeout($this->timeout)
+            ->setMethod($request->getMethod())
+            ->setPath($this->url . $request->getPath())
+            ->setResponse(curl_errno($curl) === 0 ? $output : CurlClientConst::EMPTY_RESPONSE)
+            ->setDateTime(new DateTime())
+            ->setError(curl_errno($curl) > 0 ? curl_error($curl) : null)
+            ->setResponseCode($responseCode)
+            ->setApiKey($request->isSignature() ? $this->binanceApiAccountKey->getApiKey() : null)
+            ->setRequestTime(
+                $this->getRequestTime($startTime)
+            );
 
         if (curl_errno($curl) > 0) {
             throw new RuntimeException('Curl error: ' . curl_error($curl));

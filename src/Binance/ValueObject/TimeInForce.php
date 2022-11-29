@@ -8,15 +8,20 @@ use InvalidArgumentException;
 
 final class TimeInForce extends Text
 {
-    public const TIME_IN_FORCE_GTC = 'GTC'; // Good Til Canceled
-    public const TIME_IN_FORCE_IOC = 'IOC'; // Immediate Or Cancel
-    public const TIME_IN_FORCE_FOK = 'FOK'; // Fill or Kill
+    public const GTC = 'GTC'; // Good Til Canceled
+    public const IOC = 'IOC'; // Immediate Or Cancel
+    public const FOK = 'FOK'; // Fill or Kill
 
-    public const TIME_IN_FORCE_LIST = [
-        self::TIME_IN_FORCE_GTC,
-        self::TIME_IN_FORCE_IOC,
-        self::TIME_IN_FORCE_FOK,
+    public const LIST = [
+        self::GTC,
+        self::IOC,
+        self::FOK,
     ];
+
+    public static function fromString(string $value): self
+    {
+        return new self(strtoupper($value));
+    }
 
     public function __construct(string $value)
     {
@@ -25,9 +30,9 @@ final class TimeInForce extends Text
         parent::__construct($value);
     }
 
-    private function throwIfNotValid(string $value)
+    private function throwIfNotValid(string $value): void
     {
-        if (!in_array($value, self::TIME_IN_FORCE_LIST, true)) {
+        if (!in_array($value, self::LIST, true)) {
             throw new InvalidArgumentException('Invalid timeInForce value');
         }
     }

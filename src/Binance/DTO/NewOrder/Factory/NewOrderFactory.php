@@ -20,8 +20,8 @@ final class NewOrderFactory
 
         if ($orderResponseType instanceof OrderRespType) {
             return match ($orderResponseType->getValue()) {
-                OrderRespType::ORDER_RESP_TYPE_RESULT => new NewOrderResultDTOFactory(),
-                OrderRespType::ORDER_RESP_TYPE_FULL => new NewOrderFullDTOFactory(),
+                OrderRespType::RESULT => new NewOrderResultDTOFactory(),
+                OrderRespType::FULL => new NewOrderFullDTOFactory(),
                 default => new NewOrderAckDTOFactory(),
             };
         }
@@ -29,8 +29,8 @@ final class NewOrderFactory
         $type = $cmd->getType();
 
         if ($type instanceof OrderType && in_array($type->getValue(), [
-            OrderType::ORDER_TYPE_LIMIT,
-            OrderType::ORDER_TYPE_MARKET,
+            OrderType::LIMIT,
+            OrderType::MARKET,
         ], true)) {
             return new NewOrderFullDTOFactory();
         }

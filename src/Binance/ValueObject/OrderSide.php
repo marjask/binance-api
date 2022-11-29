@@ -9,17 +9,22 @@ use InvalidArgumentException;
 
 class OrderSide extends AbstractValueObject
 {
-    public const ORDER_SIDE_BUY = 'BUY';
-    public const ORDER_SIDE_SELL = 'SELL';
+    public const BUY = 'BUY';
+    public const SELL = 'SELL';
 
-    public const ORDER_SIDES = [
-        self::ORDER_SIDE_BUY,
-        self::ORDER_SIDE_SELL,
+    public const SIDES = [
+        self::BUY,
+        self::SELL,
     ];
+
+    public static function fromString(string $value): self
+    {
+        return new self(strtoupper($value));
+    }
 
     public function __construct(string $value)
     {
-        if (!in_array($value, self::ORDER_SIDES, true)) {
+        if (!in_array($value, self::SIDES, true)) {
             throw new InvalidArgumentException(sprintf('Invalid order side %s', $value));
         }
 
