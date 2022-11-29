@@ -30,7 +30,7 @@ final class TimeInForce extends Text
         parent::__construct($value);
     }
 
-    private function throwIfNotValid(string $value)
+    private function throwIfNotValid(string $value): void
     {
         if (!in_array($value, self::LIST, true)) {
             throw new InvalidArgumentException('Invalid timeInForce value');

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace CurlClient\RequestLogger\Command;
+namespace CurlClient\Request;
 
 use DateTime;
 use Trait\ToArray\ToArrayTrait;
 
-class CreateRequestLogCommand
+class RequestDetails
 {
     use ToArrayTrait;
 
@@ -22,6 +22,7 @@ class CreateRequestLogCommand
     protected DateTime $dateTime;
     protected int $responseCode;
     protected float $requestTime;
+    protected ?string $apiKey;
 
     public function getDebug(): bool
     {
@@ -151,6 +152,18 @@ class CreateRequestLogCommand
     public function setRequestTime(float $responseTime): self
     {
         $this->requestTime = $responseTime;
+
+        return $this;
+    }
+
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
+    }
+
+    public function setApiKey(?string $apiKey): self
+    {
+        $this->apiKey = $apiKey;
 
         return $this;
     }

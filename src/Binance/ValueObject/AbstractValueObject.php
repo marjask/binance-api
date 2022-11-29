@@ -8,7 +8,7 @@ abstract class AbstractValueObject
 {
     protected mixed $value;
 
-    abstract public function getValue();
+    abstract public function getValue(): mixed;
 
     public function toString(): string
     {

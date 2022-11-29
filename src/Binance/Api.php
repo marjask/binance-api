@@ -60,8 +60,7 @@ use Binance\Command\NewOrderCommand;
 use CurlClient\CurlClientConst;
 use CurlClient\Exception\ResponseErrorException;
 use CurlClient\Query\Request;
-use CurlClient\RequestLogger\Command\CreateRequestLogCommand;
-use CurlClient\RequestLogger\Logger;
+use CurlClient\Request\RequestDetails;
 
 class Api
 {
@@ -74,23 +73,9 @@ class Api
         );
     }
 
-    public function setLogger(Logger $logger): self
+    public function getLastRequestDetails(): ?RequestDetails
     {
-        $this->client->setLogger($logger);
-
-        return $this;
-    }
-
-    public function resetLogger(): self
-    {
-        $this->client->resetLogger();
-
-        return $this;
-    }
-
-    public function getLastRequestLogCommand(): CreateRequestLogCommand
-    {
-        return $this->client->getLastRequestLogCommand();
+        return $this->client->getLastRequestDetails();
     }
 
     public function setBinanceApiAccountKey(BinanceApiAccountKey $binanceApiAccountKey): self

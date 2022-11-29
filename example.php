@@ -26,8 +26,6 @@ use Binance\ValueObject\Symbol;
 use Binance\ValueObject\TimeInForce;
 use Binance\ValueObject\Timestamp;
 use CurlClient\Exception\ResponseErrorException;
-use CurlClient\RequestLogger\Logger;
-use CurlClient\RequestLogger\Source\FileSource;
 use Marjask\ObjectValidator\Exception\InvalidValidationException;
 
 // default request don't saved
@@ -36,17 +34,6 @@ $api = new Api(
         ->setDebug(false)
         ->setTestnetEnable(true)
 );
-
-// if you are going to save the request set logger, ex:
-// save request log to file, REMEMBER: logger save only one request
-$api->setLogger(
-    new Logger(
-        new FileSource('requestLogger.log')
-    )
-);
-
-// won't save request log
-$api->resetLogger();
 
 // set api key and secret key if endpoint use HMAC SHA256 signature.
 $api->setBinanceApiAccountKey(
@@ -57,16 +44,17 @@ $api->setBinanceApiAccountKey(
 );
 
 try {
-    $bool = $api->ping();
+    $isPong = $api->ping();
 
-    $integer = $api->getCheckServerTime();
+    $serverTime = $api->getCheckServerTime();
 
     $exchangeInformationDTOCollection = $api->getExchangeInformation(
         (new ExchangeInformationQuery())
             ->setSymbol(Symbol::fromString('ETHUSDT'))
     );
 
-    $lastRequestLogCommand = $api->getLastRequestLogCommand();
+    // show information last request details information with response data
+    $lastRequestLogCommand = $api->getLastRequestDetails();
 
     $accountInformationDTO = $api->getAccountInformation(
         (new AccountInformationQuery())
