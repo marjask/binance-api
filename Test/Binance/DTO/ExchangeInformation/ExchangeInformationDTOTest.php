@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Test\Binance\DTO;
+namespace Test\Binance\DTO\ExchangeInformation;
 
 use Binance\Collection\OrderTypeCollection;
 use Binance\DTO\ExchangeInformation\ExchangeInformationDTO;

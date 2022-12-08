@@ -13,7 +13,7 @@ final class TestVO extends AbstractValueObject
         $this->setValue($value);
     }
 
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
