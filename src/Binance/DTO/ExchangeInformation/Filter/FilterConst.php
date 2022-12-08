@@ -15,4 +15,5 @@ final class FilterConst
     public const TRAILING_DELTA = 'TRAILING_DELTA';
     public const MAX_NUM_ORDERS = 'MAX_NUM_ORDERS';
     public const MAX_NUM_ALGO_ORDERS = 'MAX_NUM_ALGO_ORDERS';
+    public const PERCENT_PRICE_BY_SIDE = 'PERCENT_PRICE_BY_SIDE';
 }

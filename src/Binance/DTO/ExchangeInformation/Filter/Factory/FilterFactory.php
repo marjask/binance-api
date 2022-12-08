@@ -13,6 +13,7 @@ use Binance\DTO\ExchangeInformation\Filter\MarketLotSizeFilter;
 use Binance\DTO\ExchangeInformation\Filter\MaxNumAlgoOrdersFilter;
 use Binance\DTO\ExchangeInformation\Filter\MaxNumOrdersFilter;
 use Binance\DTO\ExchangeInformation\Filter\MinNotionalFilter;
+use Binance\DTO\ExchangeInformation\Filter\PercentPriceBySideFilter;
 use Binance\DTO\ExchangeInformation\Filter\PercentPriceFilter;
 use Binance\DTO\ExchangeInformation\Filter\PriceFilter;
 use Binance\DTO\ExchangeInformation\Filter\TrailingDeltaFilter;
@@ -44,7 +45,10 @@ final class FilterFactory
             FilterConst::TRAILING_DELTA => self::createTrailingDeltaFilterFromArray($data),
             FilterConst::MAX_NUM_ORDERS => self::createMaxNumOrdersFilterFromArray($data),
             FilterConst::MAX_NUM_ALGO_ORDERS => self::createMaxNumAlgoOrdersFilterFromArray($data),
-            default => throw new UnexpectedValueException('Unexpected filterType.'),
+            FilterConst::PERCENT_PRICE_BY_SIDE => self::createPercentPriceBySideFromArray($data),
+            default => throw new UnexpectedValueException(
+                sprintf('Unexpected filterType: %s.', $data['filterType'])
+            ),
         };
     }
 
@@ -130,6 +134,18 @@ final class FilterFactory
         return new MaxNumAlgoOrdersFilter(
             $data['filterType'],
             $data['maxNumAlgoOrders']
+        );
+    }
+
+    public static function createPercentPriceBySideFromArray(array $data): PercentPriceBySideFilter
+    {
+        return new PercentPriceBySideFilter(
+            $data['filterType'],
+            $data['bidMultiplierUp'],
+            $data['bidMultiplierDown'],
+            $data['askMultiplierUp'],
+            $data['askMultiplierDown'],
+            $data['avgPriceMins']
         );
     }
 }
