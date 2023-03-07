@@ -8,6 +8,7 @@ use Binance\Command\CloseAllOpenOrdersCommand;
 use Binance\Command\CancelOrderCommand;
 use Binance\DTO\AccountInformationDTO;
 use Binance\DTO\CancelOrderDTO;
+use Binance\DTO\Collection\CandlestickDataDTOCollection;
 use Binance\DTO\Collection\CloseOrderDTOCollection;
 use Binance\DTO\Collection\CurrentOrderCountUsageDTOCollection;
 use Binance\DTO\Collection\AccountTradeDTOCollection;
@@ -18,6 +19,7 @@ use Binance\DTO\CurrentAveragePriceDTO;
 use Binance\DTO\ExchangeInformation\ExchangeInformationDTOCollection;
 use Binance\DTO\ExchangeInformation\ExchangeInformationDTOCollectionFactory;
 use Binance\DTO\Factory\AccountInformationDTOFactory;
+use Binance\DTO\Factory\CandlestickDataDTOFactory;
 use Binance\DTO\Factory\CloseOrderDTOFactory;
 use Binance\DTO\Factory\CurrentAveragePriceDTOFactory;
 use Binance\DTO\Factory\CurrentOrderCountUsageDTOFactory;
@@ -31,6 +33,7 @@ use Binance\DTO\OrderDTO;
 use Binance\Query\AccountInformationQuery;
 use Binance\Query\AccountTradeListQuery;
 use Binance\Query\AllOrdersQuery;
+use Binance\Query\CandlestickDataQuery;
 use Binance\Query\CurrentAveragePriceQuery;
 use Binance\Query\SymbolPriceTickerQuery;
 use Binance\Query\CurrentOpenOrdersQuery;
@@ -42,6 +45,7 @@ use Binance\Query\RecentTradesListQuery;
 use Binance\Validator\AccountInformationQueryValidator;
 use Binance\Validator\AccountTradeListQueryValidator;
 use Binance\Validator\AllOrdersQueryValidator;
+use Binance\Validator\CandlestickDataQueryValidator;
 use Binance\Validator\CloseAllOpenOrdersCommandValidator;
 use Binance\Validator\CancelOrderCommandValidator;
 use Binance\Validator\CurrentAveragePriceQueryValidator;
@@ -360,5 +364,22 @@ class Api
         );
 
         return CurrentAveragePriceDTOFactory::createFromArray($response->getData());
+    }
+
+    public function getCandlestickData(CandlestickDataQuery $query): CandlestickDataDTOCollection
+    {
+        CandlestickDataQueryValidator::create()->throwIfInvalid($query);
+
+        $response = $this->client->request(
+            (new Request())
+                ->setMethod(CurlClientConst::GET)
+                ->setPath(ApiRouter::getCandlestickDataUrl())
+                ->setParams(
+                    $query->toArray()
+                )
+                ->setSignature(false)
+        );
+
+        return CandlestickDataDTOFactory::createCollectionFromArray($response->getData());
     }
 }
