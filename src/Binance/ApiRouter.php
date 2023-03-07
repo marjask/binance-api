@@ -122,4 +122,9 @@ final class ApiRouter
     {
         return self::API_V3 . '/avgPrice';
     }
+
+    public static function getCandlestickDataUrl(): string
+    {
+        return self::API_V3 . '/klines';
+    }
 }
